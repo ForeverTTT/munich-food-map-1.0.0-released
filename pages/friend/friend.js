@@ -11,19 +11,13 @@ Page({
     bgImageUrl: '',
     isLoading: true,
     userInfo: {},
-    showCommentInput: false,
-    currentPostId: '',
-    commentText: '',
-    // 新增筛选条件
+    // 筛选条件
     selectedDate: '',
     selectedPeople: '2',
     peopleRange: ['1', '2', '3', '4', '5', '6', '7', '8'],
     mealTimeRange: ['午餐', '晚餐', '下午茶', '宵夜'],
     selectedMealTime: '午餐',
-    selectedMealTimeIndex: 0,
-    // 筛选条件
-    loading: false,
-    likedPostIds: []
+    selectedMealTimeIndex: 0
   },
 
   /**
@@ -34,7 +28,13 @@ Page({
     this.loadUserInfo();
     this.setDefaultDate();
     this.loadPosts();
-    this.loadUserLikes();
+
+    // 如果有分享进入的帖子ID
+    if (options.post_id) {
+      setTimeout(() => {
+        this.scrollToPost(options.post_id);
+      }, 500);
+    }
   },
 
   /**
@@ -69,7 +69,6 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    this.loadUserLikes();
     this.loadPosts();
     wx.stopPullDownRefresh();
   },
@@ -84,8 +83,45 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {
+  onShareAppMessage(res) {
+    if (res.from === 'button') {
+      const id = res.target.dataset.id;
+      const post = this.data.posts.find(item => item._id === id);
+      
+      if (post) {
+        return {
+          title: `${post.username}想和你一起吃饭，${post.date} ${post.mealTime}`,
+          path: `/pages/friend/friend?post_id=${post._id}`,
+          imageUrl: '../../images/share-image.png' // 需要替换为实际的分享图
+        };
+      }
+    }
+    
+    return {
+      title: '美食地图 - 寻找饭搭子',
+      path: '/pages/friend/friend',
+      imageUrl: '../../images/share-image.png' // 需要替换为实际的分享图
+    };
+  },
 
+  // 滚动到指定帖子
+  scrollToPost: function(postId) {
+    const posts = this.data.posts;
+    const index = posts.findIndex(p => p._id === postId);
+    
+    if (index > -1) {
+      // 找到了帖子
+      // 使用选择器，滚动到该帖子
+      wx.createSelectorQuery()
+        .select(`#post-${postId}`)
+        .boundingClientRect(rect => {
+          wx.pageScrollTo({
+            scrollTop: rect.top,
+            duration: 300
+          });
+        })
+        .exec();
+    }
   },
 
   setDefaultDate: function() {
@@ -123,7 +159,7 @@ Page({
     this.setData({ isLoading: true });
     
     const db = wx.cloud.database();
-    db.collection('foodPartnerPosts')
+    db.collection('friend')
       .orderBy('createTime', 'desc')
       .get()
       .then(res => {
@@ -133,11 +169,7 @@ Page({
         const posts = res.data.map(post => {
           return {
             ...post,
-            isOwnPost: post.userId === this.data.userInfo.userId,
-            showComments: false, // 默认折叠评论
-            isLiked: this.data.likedPostIds.includes(post._id),
-            commentsCollapsed: true, // 默认折叠评论区
-            commentList: post.comments || []
+            isOwnPost: post.userId === this.data.userInfo.userId
           };
         });
         
@@ -145,20 +177,47 @@ Page({
           posts: posts,
           isLoading: false
         });
+        
+        // 缓存帖子数据用于离线状态
+        this.savePostsToCache(posts);
       })
       .catch(err => {
         console.error('获取饭搭子帖子失败:', err);
         this.setData({ isLoading: false });
-        wx.showToast({
-          title: '加载失败，请重试',
-          icon: 'none'
-        });
+
+        // 从本地缓存加载帖子
+        try {
+          const cachedPosts = wx.getStorageSync('cached_posts');
+          if (cachedPosts && cachedPosts.length > 0) {
+            this.setData({
+              posts: cachedPosts.map(post => ({
+                ...post,
+                isOwnPost: post.userId === this.data.userInfo.userId
+              }))
+            });
+            wx.showToast({
+              title: '已加载缓存数据',
+              icon: 'none'
+            });
+          } else {
+            wx.showToast({
+              title: '加载失败，请重试',
+              icon: 'none'
+            });
+          }
+        } catch (e) {
+          console.error('读取缓存帖子失败', e);
+          wx.showToast({
+            title: '加载失败，请重试',
+            icon: 'none'
+          });
+        }
       });
   },
 
   loadBgImage: function() {
     wx.cloud.getTempFileURL({
-      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42/images/bgimage.png'],
+      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/bgimage.png'],
       success: res => {
         if (res.fileList && res.fileList.length > 0) {
           this.setData({
@@ -171,267 +230,57 @@ Page({
       }
     });
   },
-
+  loadEmptyImage: function() {
+    wx.cloud.getTempFileURL({
+      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/empty.png'],
+      success: res => {
+        if (res.fileList && res.fileList.length > 0) {
+          this.setData({
+            emptyImageUrl: res.fileList[0].tempFileURL
+          });
+        }
+      },
+      fail: err => {
+        console.error('获取空结果图片失败', err);
+      }
+    });
+  },
   navigateToPost: function() {
     wx.navigateTo({
       url: '/pages/friend/post/post'
     });
   },
 
-  // 点赞功能
-  onLike: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const postIndex = this.data.posts.findIndex(post => post._id === postId);
+  // 复制微信号
+  copyWxid: function(e) {
+    const wxid = e.currentTarget.dataset.wxid;
     
-    if (postIndex < 0) return;
-    
-    const db = wx.cloud.database();
-    const post = this.data.posts[postIndex];
-    const isLiked = post.isLiked;
-    const newLikes = isLiked ? (post.likes - 1 || 0) : (post.likes + 1 || 1);
-    
-    db.collection('foodPartnerPosts').doc(postId).update({
-      data: {
-        likes: newLikes
-      }
-    }).then(res => {
-      console.log('点赞成功');
-      
-      // 更新本地显示
-      const posts = [...this.data.posts];
-      posts[postIndex].likes = newLikes;
-      posts[postIndex].isLiked = !isLiked;
-      
-      // 更新点赞ID列表
-      let likedPostIds = [...this.data.likedPostIds];
-      if (isLiked) {
-        likedPostIds = likedPostIds.filter(id => id !== postId);
-      } else {
-        likedPostIds.push(postId);
-      }
-      
-      this.setData({ 
-        posts,
-        likedPostIds
-      });
-      
-      // 保存点赞状态
-      this.saveUserLikes();
-      
+    if (!wxid) {
       wx.showToast({
-        title: isLiked ? '取消点赞' : '点赞成功',
-        icon: 'success'
-      });
-    }).catch(err => {
-      console.error('点赞失败:', err);
-      wx.showToast({
-        title: '操作失败',
-        icon: 'none'
-      });
-    });
-  },
-
-  // 删除帖子
-  deletePost: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条帖子吗？',
-      success: res => {
-        if (res.confirm) {
-          const db = wx.cloud.database();
-          db.collection('foodPartnerPosts').doc(postId).remove()
-            .then(res => {
-              console.log('删除帖子成功:', res);
-              
-              // 从本地列表中移除
-              const posts = this.data.posts.filter(post => post._id !== postId);
-              this.setData({ posts });
-              
-              wx.showToast({
-                title: '删除成功',
-                icon: 'success'
-              });
-            })
-            .catch(err => {
-              console.error('删除帖子失败:', err);
-              wx.showToast({
-                title: '删除失败',
-                icon: 'none'
-              });
-            });
-        }
-      }
-    });
-  },
-
-  // 切换评论区显示状态
-  toggleCommentSection: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const posts = [...this.data.posts];
-    const post = posts.find(p => p._id === postId);
-    
-    if (post) {
-      post.commentsCollapsed = !post.commentsCollapsed;
-      // 如果折叠评论区，同时关闭评论输入框
-      if (post.commentsCollapsed) {
-        post.showCommentInput = false;
-      }
-      this.setData({ posts });
-    }
-  },
-
-  // 显示评论输入框
-  toggleCommentInput: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const posts = [...this.data.posts];
-    const post = posts.find(p => p._id === postId);
-    
-    if (post) {
-      // 如果评论区折叠，先展开评论区
-      post.commentsCollapsed = false;
-      post.showCommentInput = !post.showCommentInput;
-      post.inputFocus = post.showCommentInput;
-      post.commentValue = '';
-      this.setData({ posts });
-    }
-  },
-
-  // 监听评论文字变化
-  onCommentInput: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const value = e.detail.value;
-    
-    const posts = this.data.posts.map(post => {
-      if (post._id === postId) {
-        return {
-          ...post,
-          commentValue: value
-        };
-      }
-      return post;
-    });
-    
-    this.setData({ posts });
-  },
-
-  // 提交评论
-  submitComment: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const post = this.data.posts.find(p => p._id === postId);
-    
-    if (!post || !post.commentValue || !post.commentValue.trim()) {
-      wx.showToast({
-        title: '评论内容不能为空',
+        title: '未提供微信号',
         icon: 'none'
       });
       return;
     }
-
-    const db = wx.cloud.database();
     
-    const comment = {
-      userId: this.data.userInfo.userId,
-      username: this.data.userInfo.username,
-      content: post.commentValue.trim(),
-      time: this.formatDateTime(new Date()),
-      createTime: db.serverDate()
-    };
-
-    db.collection('foodPartnerPosts').doc(postId).update({
-      data: {
-        comments: db.command.push(comment)
-      }
-    }).then(res => {
-      console.log('评论成功:', res);
-      
-      // 更新本地显示
-      const posts = this.data.posts.map(p => {
-        if (p._id === postId) {
-          const commentList = [...(p.commentList || []), comment];
-          return {
-            ...p,
-            commentList: commentList,
-            commentValue: '',
-            showCommentInput: false
-          };
-        }
-        return p;
-      });
-      
-      this.setData({ posts });
-      
-      wx.showToast({
-        title: '评论成功',
-        icon: 'success'
-      });
-    }).catch(err => {
-      console.error('评论失败:', err);
-      wx.showToast({
-        title: '评论失败',
-        icon: 'none'
-      });
-    });
-  },
-
-  // 约饭功能
-  makeReservation: function(e) {
-    const postId = e.currentTarget.dataset.id;
-    const post = this.data.posts.find(p => p._id === postId);
-    
-    if (!post) return;
-    
-    wx.showModal({
-      title: '确认约饭',
-      content: `确定要与${post.username || '该用户'}在${post.date} ${post.mealTime}一起用餐吗？`,
-      success: res => {
-        if (res.confirm) {
-          // 这里可以添加约饭逻辑，如发送通知给发布者等
-          wx.showToast({
-            title: '约饭请求已发送',
-            icon: 'success'
-          });
-        }
+    wx.setClipboardData({
+      data: wxid,
+      success: function() {
+        wx.showToast({
+          title: '已复制微信号',
+          icon: 'success'
+        });
       }
     });
   },
 
-  // 用户点赞数据管理
-  loadUserLikes: function() {
-    console.log('加载用户点赞数据');
+  // 缓存帖子数据
+  savePostsToCache: function(posts) {
     try {
-      const likedPostIds = wx.getStorageSync('forumLikedPosts') || [];
-      this.setData({
-        likedPostIds: likedPostIds
-      });
-      console.log('已加载点赞数据', likedPostIds);
+      wx.setStorageSync('cached_posts', posts);
     } catch (e) {
-      console.error('获取点赞记录失败', e);
-      this.setData({
-        likedPostIds: []
-      });
+      console.error('缓存帖子失败', e);
     }
-  },
-  
-  // 保存用户点赞数据
-  saveUserLikes: function() {
-    try {
-      wx.setStorageSync('forumLikedPosts', this.data.likedPostIds);
-    } catch (e) {
-      console.error('保存点赞记录失败', e);
-    }
-  },
-
-  // 格式化日期时间
-  formatDateTime: function(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hour = date.getHours().toString().padStart(2, '0');
-    const minute = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hour}:${minute}`;
   },
 
   // 日期选择
@@ -465,5 +314,77 @@ Page({
   // 创建帖子
   onCreatePost: function() {
     this.navigateToPost();
+  },
+
+  // 删除帖子
+  deletePost: function(e) {
+    const postId = e.currentTarget.dataset.id;
+    
+    if (!postId) {
+      wx.showToast({
+        title: '无效的帖子ID',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 弹窗确认是否删除
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条帖子吗？删除后无法恢复。',
+      confirmColor: '#F97316',
+      success: (res) => {
+        if (res.confirm) {
+          this.performDeletePost(postId);
+        }
+      }
+    });
+  },
+  
+  // 执行删除帖子操作
+  performDeletePost: function(postId) {
+    // 设置加载状态
+    wx.showLoading({
+      title: '删除中...',
+      mask: true
+    });
+    
+    // 从云数据库删除
+    const db = wx.cloud.database();
+    
+    db.collection('friend').doc(postId).remove()
+      .then(res => {
+        console.log('删除帖子成功', res);
+        
+        // 更新本地数据，移除被删除的帖子
+        const updatedPosts = this.data.posts.filter(post => post._id !== postId);
+        this.setData({
+          posts: updatedPosts
+        });
+        
+        // 更新缓存
+        this.savePostsToCache(updatedPosts);
+        
+        // 关闭加载提示
+        wx.hideLoading();
+        
+        // 显示成功提示
+        wx.showToast({
+          title: '删除成功',
+          icon: 'success'
+        });
+      })
+      .catch(err => {
+        console.error('删除帖子失败', err);
+        
+        // 关闭加载提示
+        wx.hideLoading();
+        
+        // 显示失败提示
+        wx.showToast({
+          title: '删除失败，请重试',
+          icon: 'none'
+        });
+      });
   }
 });
