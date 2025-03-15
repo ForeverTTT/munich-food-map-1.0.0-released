@@ -6,7 +6,8 @@
     "pages/me/me",
     "pages/explore/explore",
     "pages/webview/webview",
-    "pages/shop/shop"
+    "pages/shop/shop",
+    "pages/me/about/about"
   ],
   "window": {
     "backgroundTextStyle": "light",

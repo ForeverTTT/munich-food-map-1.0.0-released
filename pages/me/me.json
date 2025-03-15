@@ -1,3 +1,7 @@
 {
-  "usingComponents": {}
+  "usingComponents": {},
+  "navigationBarTitleText": "我的账户",
+  "backgroundTextStyle": "dark",
+  "navigationBarBackgroundColor": "#F97316",
+  "navigationBarTextStyle": "white"
 }
