@@ -1,0 +1,229 @@
+/* pages/me/favourate/favourate.wxss */
+.container {
+  position: relative;
+  padding: 0;
+  min-height: 100vh;
+  background: #f6f6f6;
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 220rpx;
+  z-index: 5;
+  object-fit: cover;
+  opacity: 1;
+}
+
+.banner-overlay {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 220rpx;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+  z-index: 6;
+}
+
+.page-header {
+  position: fixed;
+  top: 40rpx;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  padding: 30rpx 25rpx;
+  z-index: 15;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  font-size: 42rpx;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 2rpx;
+  text-shadow: 1rpx 1rpx 4rpx rgba(0,0,0,0.5);
+  margin-top: 30rpx;
+  margin-bottom: 10rpx;
+}
+
+.back-button {
+  position: fixed;
+  top: 70rpx;
+  left: 30rpx;
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  z-index: 100;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-weight: 500;
+}
+
+.content-wrapper {
+  margin-top: 240rpx;
+  padding: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.section::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8rpx;
+  height: 100%;
+  background: linear-gradient(to bottom, #FF9843, #F97316);
+  border-top-left-radius: 16rpx;
+  border-bottom-left-radius: 16rpx;
+}
+
+.text-block {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  padding-left: 10rpx;
+}
+
+.favorite-list {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.restaurant-item {
+  width: 100%;
+}
+
+.restaurant-item-inner {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.restaurant-item-inner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8rpx;
+  height: 100%;
+  background: linear-gradient(to bottom, #FF9843, #F97316);
+  border-top-left-radius: 16rpx;
+  border-bottom-left-radius: 16rpx;
+}
+
+.restaurant-image {
+  width: 100%;
+  height: 300rpx;
+  transition: all 0.3s;
+}
+
+.restaurant-image:active {
+  opacity: 0.9;
+}
+
+.restaurant-info {
+  padding: 20rpx 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.restaurant-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.star {
+  font-size: 40rpx;
+  color: #F97316;
+  transition: all 0.3s;
+}
+
+.star:active {
+  transform: scale(1.1);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 30rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  margin-top: 40rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+}
+
+.empty-subtext {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 30rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 6rpx solid rgba(249, 115, 22, 0.2);
+  border-top-color: #F97316;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666;
+}

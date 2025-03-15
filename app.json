@@ -7,7 +7,9 @@
     "pages/explore/explore",
     "pages/webview/webview",
     "pages/shop/shop",
-    "pages/me/about/about"
+    "pages/me/about/about",
+    "pages/me/favourate/favourate",
+    "pages/me/history/history"
   ],
   "window": {
     "backgroundTextStyle": "light",

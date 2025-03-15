@@ -1,0 +1,43 @@
+<!--pages/me/favourate/favourate.wxml-->
+<view class="container">
+  <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  <view class="banner-overlay"></view>
+  
+  <view class="page-header">
+    <view class="title">我的收藏</view>
+  </view>
+  
+  <view class="back-button" bindtap="onBack">返回</view>
+  
+  <view class="content-wrapper">
+    <view class="section favorite-intro">
+      <view class="text-block">
+        这里收录了您标记为喜欢的餐厅，希望它们能为您在美食荒漠中带来不一样的体验。
+      </view>
+    </view>
+
+    <!-- 加载指示器 -->
+    <view wx:if="{{isLoading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在加载收藏...</text>
+    </view>
+
+    <view wx:elif="{{favoriteRestaurants.length > 0}}" class="favorite-list">
+      <view class="restaurant-item" wx:for="{{favoriteRestaurants}}" wx:key="id">
+        <view class="restaurant-item-inner">
+          <image class="restaurant-image" src="{{item.image}}" mode="aspectFill" lazy-load="true" bindtap="navigateToShop" data-id="{{item.id}}"></image>
+          <view class="restaurant-info">
+            <text class="restaurant-name">{{item.name}}</text>
+            <view class="star favorite" bindtap="toggleFavorite" data-id="{{item.id}}">★</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="empty-state">
+      <view class="empty-icon">📝</view>
+      <text class="empty-text">暂无收藏的餐厅</text>
+      <text class="empty-subtext">去探索更多美食吧</text>
+    </view>
+  </view>
+</view>

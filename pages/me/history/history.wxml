@@ -1,0 +1,52 @@
+<!--pages/me/history/history.wxml-->
+<view class="container">
+  <!-- 背景图 -->
+  <image wx:if="{{bgImageUrl}}" class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  
+  <!-- 返回按钮 - 简洁样式 -->
+  <view class="back-button" bindtap="onBack">
+    <text class="back-text">返回</text>
+  </view>
+  
+  <!-- 标题 -->
+  <view class="title">浏览历史</view>
+  
+  <!-- 餐厅列表 -->
+  <view class="restaurants-container" wx:if="{{!isLoading && historyRestaurants.length > 0}}">
+    <block wx:for="{{historyRestaurants}}" wx:key="id">
+      <view class="restaurant-item">
+        <!-- 餐厅图片 -->
+        <image 
+          class="restaurant-image" 
+          src="{{item.image || '/images/restaurant.png'}}" 
+          mode="aspectFill"
+          binderror="onImageError"
+          data-index="{{index}}"
+          bindtap="navigateToShop"
+          data-id="{{item.id}}"
+        ></image>
+        
+        <!-- 餐厅信息 -->
+        <view class="restaurant-info" bindtap="navigateToShop" data-id="{{item.id}}">
+          <view class="restaurant-name">{{item.name || '未知餐厅'}}</view>
+          <view class="restaurant-address">{{item.address || '地址未知'}}</view>
+        </view>
+        
+        <!-- 删除按钮 -->
+        <view class="delete-button" catchtap="removeFromHistory" data-id="{{item.id}}">
+          <text class="delete-text">×</text>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 加载中提示 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading">加载中...</view>
+  </view>
+  
+  <!-- 无记录提示 -->
+  <view class="no-data" wx:if="{{!isLoading && historyRestaurants.length === 0}}">
+    <text>暂无浏览记录</text>
+  </view>
+</view>

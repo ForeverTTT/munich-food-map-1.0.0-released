@@ -123,15 +123,13 @@ Page({
 
   onNavigateToFavorites() {
     wx.navigateTo({
-      url: '/pages/favorite/favorite'
+      url: '/pages/me/favourate/favourate'
     });
   },
 
   onNavigateToHistory() {
-    wx.showToast({
-      title: '浏览历史功能开发中',
-      icon: 'none',
-      duration: 2000
+    wx.navigateTo({
+      url: '/pages/me/history/history'
     });
   },
 

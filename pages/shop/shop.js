@@ -93,7 +93,57 @@ Page({
 
   },
 
+  saveToHistory: function(shopData) {
+    if (!shopData || !shopData.id) {
+      console.warn('保存历史记录: 无效的餐厅数据', shopData);
+      return;
+    }
+
+    console.log('正在保存餐厅到浏览历史:', shopData);
+    
+    // 获取现有历史记录
+    let historyRestaurants = wx.getStorageSync('historyRestaurants') || [];
+    
+    // 检查餐厅是否已在历史记录中
+    const existingIndex = historyRestaurants.findIndex(item => String(item.id) === String(shopData.id));
+    
+    // 如果已存在，则移除旧的记录
+    if (existingIndex !== -1) {
+      historyRestaurants.splice(existingIndex, 1);
+    }
+    
+    // 添加新的餐厅记录到列表开头（最新访问的在前面）
+    historyRestaurants.unshift({
+      id: shopData.id,
+      name: shopData.name,
+      image: shopData.imageUrl,
+      address: shopData.address
+    });
+    
+    // 限制历史记录数量为最近8个
+    if (historyRestaurants.length > 8) {
+      historyRestaurants = historyRestaurants.slice(0, 8);
+    }
+    
+    // 保存更新后的历史记录到本地存储
+    wx.setStorageSync('historyRestaurants', historyRestaurants);
+    console.log('历史记录已更新，当前数量:', historyRestaurants.length);
+  },
+
   loadShopData: function(shopId) {
+    // 设置加载超时处理
+    let timeoutId = setTimeout(() => {
+      this.setData({
+        loading: false,
+        error: true
+      });
+      wx.showToast({
+        title: '数据加载超时',
+        icon: 'none',
+        duration: 2000
+      });
+    }, 5000); // 5秒超时
+
     // 获取餐厅详情数据
     const restaurantDetails = {
       '1': {
@@ -309,6 +359,17 @@ Page({
     // 从首页获取基本信息
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('passShopData', (data) => {
+      // 清除超时计时器
+      clearTimeout(timeoutId);
+      console.log('接收到餐厅数据:', data);
+      
+      // 确保imageUrl字段存在
+      if (!data.imageUrl) {
+        console.warn('未接收到餐厅图片URL，使用默认图片');
+      } else {
+        console.log('成功接收餐厅图片URL:', data.imageUrl);
+      }
+      
       // 获取已有详情或使用默认详情
       const details = restaurantDetails[shopId] || defaultDetails;
       
@@ -325,26 +386,37 @@ Page({
         };
       }
       
+      // 组合完整的餐厅数据
+      const shopData = {
+        id: shopId,
+        name: data.name || '未知餐厅',
+        imageUrl: data.imageUrl || '/images/default-restaurant.jpg',
+        address: data.address || '地址未知',
+        phone: details.phone || '无',
+        price: details.price || 15,
+        rating: details.rating || 4.5,
+        hours: details.hours || '周一至周日 11:00-22:00',
+        tags: details.tags || ['中餐', '经济实惠'],
+        description: details.description || `${data.name}提供正宗的中式美食，口味地道，价格实惠，环境舒适。`,
+        cuisine: details.cuisine || '中餐馆',
+        transport: details.transport || {
+          subway: 'U1/U2/U3线到Marienplatz站',
+          bus: '100/150路到中心广场站'
+        }
+      };
+      
+      // 更新页面数据
       this.setData({
-        'shopData': {
-          id: shopId,
-          name: data.name || '',
-          imageUrl: data.imageUrl || '',
-          address: data.address || '',
-          phone: details.phone || '无',
-          price: details.price || 15,
-          rating: details.rating || 4.5,
-          hours: details.hours || '周一至周日 11:00-22:00',
-          tags: details.tags || ['中餐', '经济实惠'],
-          description: details.description || `${data.name}提供正宗的中式美食，口味地道，价格实惠，环境舒适。`,
-          cuisine: details.cuisine || '中餐馆',
-          transport: details.transport || {
-            subway: 'U1/U2/U3线到Marienplatz站',
-            bus: '100/150路到中心广场站'
-          }
-        },
-        loading: false
+        shopData: shopData,
+        loading: false,
+        error: false
       });
+      
+      // 保存到浏览历史
+      this.saveToHistory(shopData);
+      
+      // 记录加载完成的数据
+      console.log('餐厅数据加载完成:', shopData);
     });
   },
 
@@ -524,6 +596,13 @@ Page({
       fail: err => {
         console.error('获取背景图片失败', err);
       }
+    });
+  },
+
+  onImageError: function(e) {
+    console.error('餐厅图片加载失败，使用默认图片', e);
+    this.setData({
+      'shopData.imageUrl': '/images/logo.png'
     });
   }
 })

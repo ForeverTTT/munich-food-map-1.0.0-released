@@ -16,7 +16,7 @@
   </view>
 
   <view class="content-wrapper" wx:else>
-    <image class="shop-image" src="{{shopData.imageUrl}}" mode="aspectFill"></image>
+    <image class="shop-image" src="{{shopData.imageUrl || '/images/logo.png'}}" mode="aspectFill" lazy-load="true" binderror="onImageError"></image>
     
     <view class="shop-info-card">
       <view class="shop-header">
