@@ -1,0 +1,107 @@
+<!--pages/explore/explore.wxml-->
+<view class="container">
+  <image class="bg-image" src="../../images/bgimage.png" mode="aspectFill"></image>
+  <view class="banner-overlay"></view>
+  
+  <view class="back-button" bindtap="goBack">返回</view>
+
+  <!-- 餐厅主要信息 -->
+  <view class="content-wrapper">
+    <view class="shop-info-card">
+      <image class="shop-image" src="{{shop.image}}" mode="aspectFill"></image>
+      <view class="shop-header">
+        <view class="shop-title-row">
+          <view class="title-container">
+            <text class="shop-name">{{shop.name}}</text>
+            <text class="cuisine-badge">{{shop.cuisine}}</text>
+          </view>
+          <view class="favorite-button" bindtap="toggleFavorite">
+            <text class="favorite-icon">★</text>
+          </view>
+        </view>
+        
+        <view class="shop-rating">
+          <text class="rating-score">{{shop.rating}}</text>
+          <view class="rating-stars">
+            <text class="star" wx:for="{{5}}" wx:key="*this">★</text>
+          </view>
+        </view>
+        
+        <view class="tag-list">
+          <text class="tag-item" wx:for="{{shop.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      
+      <!-- 餐厅详细信息 -->
+      <view class="info-section">
+        <view class="info-row" bindtap="openGoogleMaps">
+          <view class="info-icon">📍</view>
+          <view class="info-content">
+            <text class="info-text">{{shop.address}}</text>
+            <text class="map-hint">点击查看谷歌地图</text>
+          </view>
+          <view class="map-icon">🗺️</view>
+        </view>
+        
+        <view class="info-row" bindtap="callShop">
+          <view class="info-icon">📞</view>
+          <text class="info-text">{{shop.phone}}</text>
+        </view>
+        
+        <view class="info-row">
+          <view class="info-icon">💰</view>
+          <text class="info-text">人均: {{shop.averagePrice}}€</text>
+        </view>
+        
+        <view class="info-row">
+          <view class="info-icon">🕒</view>
+          <text class="info-text">{{shop.openingHours}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 餐厅介绍 -->
+    <view class="description-card">
+      <view class="card-title">餐厅介绍</view>
+      <text class="description-text">{{shop.description}}</text>
+    </view>
+    
+    <!-- 交通指南 -->
+    <view class="transport-card">
+      <view class="card-title">交通指南</view>
+      <view class="transport-options">
+        <view class="transport-option">
+          <view class="transport-icon">🚇</view>
+          <text class="transport-text">地铁: U2线到慕尼黑中心站</text>
+        </view>
+        <view class="transport-option">
+          <view class="transport-icon">🚌</view>
+          <text class="transport-text">公交: 100/150路到中心广场站</text>
+        </view>
+        <view class="transport-option">
+          <view class="transport-icon">🚶‍♂️</view>
+          <text class="transport-text">步行: 距离玛丽亚广场5分钟</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tabbar">
+    <view class="tab-item" bindtap="navigateToRestaurant">
+      <image src="/images/restaurant.png" mode="aspectFit"></image>
+      <text>餐厅</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToForum">
+      <image src="/images/forum.png" mode="aspectFit"></image>
+      <text>饭搭子</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToExplore">
+      <image src="/images/shop.png" mode="aspectFit"></image>
+      <text>探店</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToAccount">
+      <image src="/images/me.png" mode="aspectFit"></image>
+      <text>账号</text>
+    </view>
+  </view>
+</view>

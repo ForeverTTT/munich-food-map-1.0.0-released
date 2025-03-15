@@ -2,12 +2,56 @@
   "pages": [
     "pages/index/index",
     "pages/logs/logs",
-    "pages/me/me"
+    "pages/friend/friend",
+    "pages/me/me",
+    "pages/explore/explore",
+    "pages/webview/webview",
+    "pages/shop/shop"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "慕村美食地图",
+    "navigationBarTextStyle": "black"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#FF6B6B",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "餐厅",
+        "iconPath": "images/restaurant.png",
+        "selectedIconPath": "images/restaurant.png"
+      },
+      {
+        "pagePath": "pages/friend/friend",
+        "text": "饭搭子",
+        "iconPath": "images/friend.png",
+        "selectedIconPath": "images/friend.png"
+      },
+      {
+        "pagePath": "pages/explore/explore",
+        "text": "探店",
+        "iconPath": "images/explore.png",
+        "selectedIconPath": "images/explore.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "账号",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me.png"
+      }
+    ]
   },
   "style": "v2",
   "componentFramework": "glass-easel",

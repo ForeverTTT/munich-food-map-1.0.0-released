@@ -1,27 +1,79 @@
 <!--index.wxml-->
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+<view class="container">
+  <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  <view class="banner-overlay"></view>
+  <view class="page-header">
+    <view class="title">慕村美食地图</view>
+    <view class="search-box">
+      <icon type="search" size="14" color="#999"/>
+      <input placeholder="搜索餐厅" placeholder-class="placeholder" bindinput="onSearchInput" confirm-type="search" value="{{searchText}}"/>
+      <view class="clear-icon" bindtap="clearSearch" wx:if="{{searchText}}">✕</view>
     </view>
   </view>
-</scroll-view>
+  
+  <view class="filter-bar">
+    <view class="filter-item {{currentFilter === '全部' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="全部">全部</view>
+    <view class="filter-item {{currentFilter === '中餐' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="中餐">中餐</view>
+    <view class="filter-item {{currentFilter === '火锅' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="火锅">火锅</view>
+    <view class="filter-item {{currentFilter === '面馆' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="面馆">面馆</view>
+  </view>
+  
+  <view class="restaurant-count">
+    当前显示 <text class="count-number">{{filteredRestaurants.length}}</text> 家餐馆
+  </view>
+  
+  <!-- 按字母分组显示餐厅 -->
+  <scroll-view class="restaurant-list" scroll-y scroll-into-view="{{scrollIntoView}}" wx:if="{{filteredRestaurants.length > 0}}">
+    <block wx:for="{{letterList}}" wx:key="*this" wx:for-item="letter">
+      <block wx:if="{{restaurantsByLetter[letter] && restaurantsByLetter[letter].length > 0}}">
+        <view class="letter-header" id="letter-{{letter}}" bindtap="showLetterMenu">{{letter}}</view>
+        <view class="restaurant-group">
+          <view class="restaurant-item" wx:for="{{restaurantsByLetter[letter]}}" wx:key="id" bindtap="navigateToShop" data-id="{{item.id}}">
+            <view class="image-container">
+              <image class="restaurant-image" src="{{item.image}}" mode="aspectFill"/>
+              <text class="star {{item.favorite ? 'favorite' : ''}}" catchtap="toggleFavorite" data-id="{{item.id}}">★</text>
+            </view>
+            <view class="restaurant-info">
+              <view class="name-container">
+                <text class="restaurant-name">{{item.name}}</text>
+                <view class="tag-container">
+                  <text class="cuisine-tag">{{item.cuisine}}</text>
+                  <text class="price-tag">{{item.price}}</text>
+                </view>
+                <text class="hours-text">{{item.hours}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </block>
+  </scroll-view>
+  
+  <!-- 字母选择菜单 -->
+  <view class="letter-menu" wx:if="{{showLetterMenu}}">
+    <view class="letter-menu-content">
+      <view class="letter-menu-title">快速导航</view>
+      <view class="letter-grid">
+        <view 
+          wx:for="{{letterList}}" 
+          wx:key="*this" 
+          class="letter-grid-item {{restaurantsByLetter[item] && restaurantsByLetter[item].length > 0 ? 'active' : 'disabled'}}"
+          bindtap="{{restaurantsByLetter[item] && restaurantsByLetter[item].length > 0 ? 'onLetterTap' : ''}}" 
+          data-letter="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="letter-menu-close" bindtap="hideLetterMenu">关闭</view>
+    </view>
+  </view>
+  
+  <!-- 当前字母指示器 -->
+  <view class="current-letter-indicator" wx:if="{{currentLetter}}">
+    {{currentLetter}}
+  </view>
+  
+  <view class="empty-result" wx:if="{{filteredRestaurants.length === 0}}">
+    <image class="empty-icon" src="{{emptyImageUrl}}" mode="aspectFit"></image>
+    <text class="empty-text">没有找到相关餐厅</text>
+  </view>
+</view>

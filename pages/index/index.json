@@ -1,4 +1,9 @@
 {
   "usingComponents": {
-  }
+  },
+  "navigationBarTitleText": "慕村美食地图",
+  "backgroundTextStyle": "dark",
+  "navigationBarBackgroundColor": "#F97316", 
+  "navigationBarTextStyle": "white",
+  "navigationStyle": "custom"
 }

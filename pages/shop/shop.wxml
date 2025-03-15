@@ -1,0 +1,115 @@
+<!--pages/shop/shop.wxml-->
+<view class="container">
+  <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  <view class="banner-overlay"></view>
+  
+  <view class="back-button" bindtap="navigateBack">返回</view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="error-container" wx:elif="{{error}}">
+    <text class="error-text">加载失败，请返回重试</text>
+    <view class="back-button" bindtap="navigateBack">返回</view>
+  </view>
+
+  <view class="content-wrapper" wx:else>
+    <image class="shop-image" src="{{shopData.imageUrl}}" mode="aspectFill"></image>
+    
+    <view class="shop-info-card">
+      <view class="shop-header">
+        <view class="shop-title-row">
+          <view class="title-container">
+            <text class="shop-name">{{shopData.name}}</text>
+            <text class="cuisine-badge">{{shopData.cuisine}}</text>
+          </view>
+          <view class="favorite-button" bindtap="toggleFavorite">
+            <text class="favorite-icon {{isFavorite ? 'active' : ''}}">★</text>
+          </view>
+        </view>
+        
+        <view class="shop-rating">
+          <text class="rating-score">{{shopData.rating}}</text>
+          <view class="rating-stars">
+            <text class="star" wx:for="{{5}}" wx:key="*this">★</text>
+          </view>
+        </view>
+        
+        <view class="tag-list">
+          <text class="tag-item" wx:for="{{shopData.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      
+      <!-- 餐厅详细信息 -->
+      <view class="info-section">
+        <view class="info-row" bindtap="openGoogleMaps">
+          <view class="info-icon">📍</view>
+          <view class="info-content">
+            <text class="info-text">{{shopData.address}}</text>
+            <view class="map-link">
+              <text class="map-icon">🗺️</text>
+              <text class="map-hint">点击查看谷歌地图</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="info-row" bindtap="callShop">
+          <view class="info-icon">📞</view>
+          <text class="info-text">{{shopData.phone}}</text>
+        </view>
+        
+        <view class="info-row">
+          <view class="info-icon">💰</view>
+          <text class="info-text">人均: {{shopData.price}}€</text>
+        </view>
+        
+        <view class="info-row">
+          <view class="info-icon">🕒</view>
+          <text class="info-text">{{shopData.hours}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 餐厅介绍 -->
+    <view class="description-card">
+      <view class="card-title">餐厅介绍</view>
+      <text class="description-text">{{shopData.description}}</text>
+    </view>
+    
+    <!-- 交通指南 -->
+    <view class="transport-card">
+      <view class="card-title">交通指南</view>
+      <view class="transport-options">
+        <view class="transport-option">
+          <view class="transport-icon">🚇</view>
+          <text class="transport-text">地铁: {{shopData.transport.subway}}</text>
+        </view>
+        <view class="transport-option">
+          <view class="transport-icon">🚌</view>
+          <text class="transport-text">公交: {{shopData.transport.bus}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tabbar">
+    <view class="tab-item" bindtap="switchTab" data-tab="index">
+      <image src="/images/restaurant.png" mode="aspectFit"></image>
+      <text>餐厅</text>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="friend">
+      <image src="/images/friend.png" mode="aspectFit"></image>
+      <text>饭搭子</text>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="explore">
+      <image src="/images/explore.png" mode="aspectFit"></image>
+      <text>探店</text>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="me">
+      <image src="/images/me.png" mode="aspectFit"></image>
+      <text>账号</text>
+    </view>
+  </view>
+</view>

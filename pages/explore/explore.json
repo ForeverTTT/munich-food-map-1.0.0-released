@@ -1,0 +1,8 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "餐厅详情",
+  "backgroundTextStyle": "dark",
+  "navigationBarBackgroundColor": "#F97316",
+  "navigationBarTextStyle": "white",
+  "navigationStyle": "custom"
+}
