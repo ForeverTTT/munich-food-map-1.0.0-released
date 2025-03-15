@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/logs/logs",
     "pages/friend/friend",
+    "pages/friend/post/post",
     "pages/me/me",
     "pages/explore/explore",
     "pages/webview/webview",

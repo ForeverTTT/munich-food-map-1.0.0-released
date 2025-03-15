@@ -1,2 +1,168 @@
 <!--pages/friend/friend.wxml-->
-<text>pages/friend/friend.wxml</text>
+<view class="container">
+  <!-- 背景图 -->
+  <image wx:if="{{bgImageUrl}}" class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  <view class="banner-overlay"></view>
+  
+  <!-- 头部 -->
+  <view class="page-header">
+    <view class="title">吃饭搭子</view>
+    <view class="filter-section">
+      <picker mode="date" bindchange="onDateChange" class="filter-item">
+        <view class="picker-content">
+          <text class="picker-label">日期</text>
+          <text class="picker-value">{{selectedDate}}</text>
+        </view>
+      </picker>
+      <picker mode="selector" range="{{mealTimeRange}}" bindchange="onMealTimeChange" class="filter-item">
+        <view class="picker-content">
+          <text class="picker-label">餐段</text>
+          <text class="picker-value">{{selectedMealTime}}</text>
+        </view>
+      </picker>
+      <picker mode="selector" range="{{peopleRange}}" bindchange="onPeopleChange" class="filter-item">
+        <view class="picker-content">
+          <text class="picker-label">人数</text>
+          <text class="picker-value">{{selectedPeople}}人</text>
+        </view>
+      </picker>
+      <view class="header-post-button" bindtap="onCreatePost">
+        <text class="plus">+</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载中提示 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-icon"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="empty-container" wx:if="{{!isLoading && posts.length === 0}}">
+    <text class="empty-text">暂无吃饭搭子信息</text>
+    <text class="empty-desc">快来发布您的饭搭子信息吧！</text>
+    <view class="empty-button" bindtap="onCreatePost">发布</view>
+  </view>
+  
+  <!-- 帖子列表 -->
+  <view class="posts-section" wx:if="{{!isLoading && posts.length > 0}}">
+    <view class="post-list">
+      <view class="post-item" wx:for="{{posts}}" wx:key="_id">
+        <view class="post-header">
+          <view class="user-avatar">
+            <view class="avatar-placeholder">{{item.username[0] || '美'}}</view>
+          </view>
+          <view class="user-info">
+            <text class="username">{{item.username || '美食达人'}}</text>
+            <view class="post-tags">
+              <text class="post-tag date-tag">{{item.date || selectedDate}}</text>
+              <text class="post-tag meal-tag">{{item.mealTime || selectedMealTime}}</text>
+              <text class="post-tag people-tag">{{item.peopleCount || selectedPeople}}人</text>
+            </view>
+          </view>
+          <!-- 删除按钮 -->
+          <view wx:if="{{item.isOwnPost}}" class="delete-button" catchtap="deletePost" data-id="{{item._id}}">
+            <text class="delete-icon">🗑️</text>
+          </view>
+        </view>
+        
+        <!-- 帖子内容 -->
+        <view class="post-content">
+          <text class="post-text">{{item.description || '今天发现了一家超赞的火锅店，味道真的很不错！推荐大家去尝尝~'}}</text>
+          <view wx:if="{{item.wxid}}" class="wxid-container">
+            <text class="wxid-label">微信：</text>
+            <text class="wxid-value">{{item.wxid}}</text>
+          </view>
+        </view>
+        
+        <view class="post-divider"></view>
+        
+        <!-- 互动区域 -->
+        <view class="post-actions">
+          <!-- 点赞 -->
+          <view class="action-item {{item.isLiked ? 'liked-action' : ''}}" bindtap="onLike" data-id="{{item._id}}">
+            <text class="icon {{item.isLiked ? 'liked' : ''}}">❤</text>
+            <text class="count">{{item.likes || 0}}</text>
+          </view>
+          
+          <!-- 评论 -->
+          <view class="action-item" bindtap="toggleCommentInput" data-id="{{item._id}}">
+            <text class="icon">💬</text>
+            <text class="count">{{item.commentList.length || 0}}</text>
+          </view>
+          
+          <!-- 分享 -->
+          <view class="action-share">
+            <text class="icon">🔗</text>
+            <text class="share-text">分享</text>
+          </view>
+
+          <!-- 约饭按钮 -->
+          <view class="reservation-btn" bindtap="makeReservation" data-id="{{item._id}}">
+            <text>+ 约饭</text>
+          </view>
+        </view>
+        
+        <!-- 评论区 -->
+        <view class="comments-section" wx:if="{{item.showComments || item.commentList.length > 0}}">
+          <!-- 评论区标题栏 -->
+          <view class="comments-header">
+            <text class="comments-title">评论 ({{item.commentList.length || 0}})</text>
+            <view class="comments-toggle" bindtap="toggleCommentSection" data-id="{{item._id}}">
+              <text class="toggle-text">{{item.commentsCollapsed ? '展开' : '收起'}}</text>
+              <text class="toggle-icon">{{item.commentsCollapsed ? '▼' : '▲'}}</text>
+            </view>
+          </view>
+          
+          <!-- 评论列表 -->
+          <view class="comment-list" wx:if="{{item.commentList.length > 0 && !item.commentsCollapsed}}">
+            <view class="comment-item" wx:for="{{item.commentList}}" wx:for-item="comment" wx:key="index">
+              <view class="comment-avatar">
+                <text>{{comment.username[0] || '用'}}</text>
+              </view>
+              <view class="comment-content">
+                <view class="comment-info">
+                  <text class="comment-username">{{comment.username}}</text>
+                  <text class="comment-time">{{comment.time || '刚刚'}}</text>
+                </view>
+                <text class="comment-text">{{comment.content}}</text>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 无评论提示 -->
+          <view class="no-comments" wx:if="{{!item.commentList || item.commentList.length === 0 && !item.commentsCollapsed}}">
+            <text>暂无评论，添加第一条评论吧</text>
+          </view>
+          
+          <!-- 评论输入框 -->
+          <view class="comment-input-container" wx:if="{{item.showCommentInput && !item.commentsCollapsed}}">
+            <input 
+              class="comment-input" 
+              placeholder="写下你的评论..." 
+              value="{{item.commentValue || ''}}" 
+              focus="{{item.inputFocus}}"
+              bindinput="onCommentInput"
+              data-id="{{item._id}}"
+              confirm-type="send"
+              bindconfirm="submitComment"
+              data-id="{{item._id}}"
+            />
+            <view 
+              class="comment-submit-btn {{item.commentValue ? 'active' : ''}}" 
+              bindtap="submitComment" 
+              data-id="{{item._id}}"
+            >发送</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部发帖按钮 -->
+  <view class="floating-button" bindtap="onCreatePost">
+    <text class="float-plus">+</text>
+    <text class="float-text">约饭</text>
+  </view>
+</view>

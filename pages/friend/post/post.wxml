@@ -1,0 +1,63 @@
+<!--pages/friend/post/post.wxml-->
+<view class="container">
+  <!-- 背景图 -->
+  <image wx:if="{{bgImageUrl}}" class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
+  
+  <!-- 返回按钮 -->
+  <view class="back-button" bindtap="onBack">
+    <text class="back-text">返回</text>
+  </view>
+  
+  <!-- 页面标题 -->
+  <view class="page-title">发布吃饭搭子</view>
+  
+  <!-- 表单区域 -->
+  <view class="form-group">
+    <view class="form-item">
+      <text class="label">选择日期 <text class="required">*</text></text>
+      <picker mode="date" value="{{selectedDate}}" start="{{startDate}}" end="{{endDate}}" bindchange="onDateChange">
+        <view class="picker">
+          <text>{{selectedDate}}</text>
+          <view class="picker-icon">📅</view>
+        </view>
+      </picker>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">用餐时间 <text class="required">*</text></text>
+      <picker mode="selector" range="{{mealTimeRange}}" value="{{selectedMealTimeIndex}}" bindchange="onMealTimeChange">
+        <view class="picker">
+          <text>{{selectedMealTime}}</text>
+          <view class="picker-icon">🍽️</view>
+        </view>
+      </picker>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">人数 <text class="required">*</text></text>
+      <picker mode="selector" range="{{peopleRange}}" value="{{selectedPeopleIndex}}" bindchange="onPeopleChange">
+        <view class="picker">
+          <text>{{selectedPeople}}人</text>
+          <view class="picker-icon">👥</view>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">微信号 <text class="required">*</text></text>
+      <input class="wxid-input" placeholder="请填写您的微信号，方便联系" value="{{wxid}}" bindinput="onWxidInput" maxlength="30" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">描述</text>
+      <textarea class="content-input" placeholder="描述一下你的需求或想法..." value="{{content}}" bindinput="onContentInput" maxlength="200"></textarea>
+      <view class="char-counter">{{content.length}}/200</view>
+    </view>
+  </view>
+
+  <view class="action-section">
+    <view class="submit-btn" bindtap="onSubmit">
+      <text class="submit-text">发布</text>
+    </view>
+  </view>
+</view>
