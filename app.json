@@ -6,6 +6,7 @@
     "pages/friend/post/post",
     "pages/me/me",
     "pages/explore/explore",
+    "pages/explore/post/post",
     "pages/webview/webview",
     "pages/shop/shop",
     "pages/me/about/about",

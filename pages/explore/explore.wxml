@@ -1,107 +1,168 @@
 <!--pages/explore/explore.wxml-->
 <view class="container">
-  <image class="bg-image" src="../../images/bgimage.png" mode="aspectFill"></image>
+
+  <!-- 背景图 -->
+  <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
   <view class="banner-overlay"></view>
   
-  <view class="back-button" bindtap="goBack">返回</view>
+  
+  <!-- 全屏加载动画 -->
+  <view class="fullscreen-loading" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+  
+  <!-- 内容标题 -->
+  <view class="page-header">
+    <view class="title">探店日记</view>
+    <view class="category-section">
+      <view class="filter-tags">
+        <view class="category-item {{activeCategory === 'all' ? 'active' : ''}}" bindtap="switchCategory" data-category="all">
+          <text>全部</text>
+        </view>
+        <view class="category-item {{activeCategory === '美食' ? 'active' : ''}}" bindtap="switchCategory" data-category="美食">
+          <text>美食</text>
+        </view>
+        <view class="category-item {{activeCategory === '饮品' ? 'active' : ''}}" bindtap="switchCategory" data-category="饮品">
+          <text>饮品</text>
+        </view>
+        <view class="category-item {{activeCategory === '小吃' ? 'active' : ''}}" bindtap="switchCategory" data-category="小吃">
+          <text>小吃</text>
+        </view>
+      </view>
+      <view class="add-post-btn" bindtap="onCreatePost">
+        <text class="plus">+</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载中提示 -->
+  <view class="loading-container" wx:if="{{isLoading && posts.length === 0 && false}}">
+    <view class="loading-icon"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="empty-container" wx:if="{{!isLoading && posts.length === 0}}">
+    <text class="empty-text">暂无探店日记</text>
+    <text class="empty-desc">快来记录你的探店体验吧！</text>
+    <view class="empty-button" bindtap="onCreatePost">发布</view>
+  </view>
+  
+  <!-- 帖子列表 -->
+  <view class="posts-section" wx:if="{{posts.length > 0}}">
+    <view class="post-list">
+      <view class="post-item" wx:for="{{posts}}" wx:key="_id" id="post-{{item._id}}">
+        <view class="post-header">
+          <view class="user-avatar">
+            <view class="avatar-placeholder">{{item.username[0] || '美'}}</view>
+          </view>
+          <view class="user-info">
+            <text class="username">{{item.username || '美食探店家'}}</text>
+            <view class="shop-info">
+              <text class="shop-name">{{item.shopName}}</text>
+              <view class="rating-container">
+                <text class="rating-value">{{item.rating || 0}}</text>
+                <text class="rating-star">★</text>
+              </view>
+              <text class="post-date">{{item.createTime}}</text>
+            </view>
+            <!-- 删除按钮 -->
+            <view wx:if="{{item.isOwnPost}}" class="delete-button" catchtap="deletePost" data-id="{{item._id}}">
+              <view class="trash-icon">🗑️</view>
+            </view>
+          </view>
+        </view>
 
-  <!-- 餐厅主要信息 -->
-  <view class="content-wrapper">
-    <view class="shop-info-card">
-      <image class="shop-image" src="{{shop.image}}" mode="aspectFill"></image>
-      <view class="shop-header">
-        <view class="shop-title-row">
-          <view class="title-container">
-            <text class="shop-name">{{shop.name}}</text>
-            <text class="cuisine-badge">{{shop.cuisine}}</text>
+        <!-- 帖子内容 -->
+        <view class="post-content">
+          <text class="post-text">{{item.content || '该用户未留下评价内容~'}}</text>
+
+          <!-- 帖子图片 -->
+          <view class="post-image-container" wx:if="{{item.images && item.images.length > 0}}">
+            <image class="post-image" src="{{item.images[0]}}" mode="aspectFill" bindtap="previewImage" data-urls="{{item.images}}" data-current="{{item.images[0]}}"></image>
           </view>
-          <view class="favorite-button" bindtap="toggleFavorite">
-            <text class="favorite-icon">★</text>
-          </view>
-        </view>
-        
-        <view class="shop-rating">
-          <text class="rating-score">{{shop.rating}}</text>
-          <view class="rating-stars">
-            <text class="star" wx:for="{{5}}" wx:key="*this">★</text>
+          
+          <!-- 标签 -->
+          <view class="tags-container" wx:if="{{item.tags && item.tags.length > 0}}">
+            <view class="tag-item" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="index">
+              <text>#{{tag}}</text>
+            </view>
           </view>
         </view>
+
+        <view class="post-divider"></view>
+
+        <!-- 互动区域 -->
+        <view class="post-actions">
+          <!-- 点赞 -->
+          <view class="action-item {{item.isLiked ? 'liked' : ''}}" bindtap="onLike" data-id="{{item._id}}">
+            <text class="action-icon">❤</text>
+            <text class="action-count">{{item.likes || 0}}</text>
+          </view>
+          
+          <!-- 评论 -->
+          <view class="action-item" bindtap="toggleComments" data-id="{{item._id}}">
+            <text class="action-icon">💬</text>
+            <text class="action-count">{{item.comments.length || 0}}</text>
+          </view>
+          
+          <!-- 分享 -->
+          <button class="share-button" open-type="share" data-id="{{item._id}}">
+            <text class="action-icon">🔗</text>
+            <text class="action-text">分享</text>
+          </button>
+        </view>
         
-        <view class="tag-list">
-          <text class="tag-item" wx:for="{{shop.tags}}" wx:key="*this">{{item}}</text>
+        <!-- 评论区域 -->
+        <view class="comments-section" wx:if="{{item.showComments}}">
+          <view class="comment-list" wx:if="{{item.comments && item.comments.length > 0}}">
+            <view class="comment-item" wx:for="{{item.comments}}" wx:for-item="comment" wx:key="index">
+              <view class="comment-avatar">
+                <view class="avatar-small">{{comment.username[0] || '用'}}</view>
+              </view>
+              <view class="comment-content">
+                <view class="comment-user">
+                  <text class="comment-username">{{comment.username}}</text>
+                  <text class="comment-time">{{comment.createTime}}</text>
+                </view>
+                <text class="comment-text">{{comment.content}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="no-comments" wx:else>
+            <text>暂无评论，快来添加第一条评论吧</text>
+          </view>
+
+          <!-- 评论输入框 -->
+          <view class="comment-input-container">
+            <input class="comment-input" placeholder="写下你的评论..." value="{{commentText}}" bindinput="onCommentInput" data-id="{{item._id}}" confirm-type="send" bindconfirm="submitComment" />
+            <view class="comment-submit {{commentText ? 'active' : ''}}" bindtap="submitComment" data-id="{{item._id}}">发送</view>
+          </view>
         </view>
       </view>
       
-      <!-- 餐厅详细信息 -->
-      <view class="info-section">
-        <view class="info-row" bindtap="openGoogleMaps">
-          <view class="info-icon">📍</view>
-          <view class="info-content">
-            <text class="info-text">{{shop.address}}</text>
-            <text class="map-hint">点击查看谷歌地图</text>
-          </view>
-          <view class="map-icon">🗺️</view>
+      <!-- 底部加载更多区域 -->
+      <view class="load-more-section">
+        <view class="load-more-button" bindtap="loadMorePosts" wx:if="{{hasMoreData && !isLoadingMore && !isLoading}}">
+          <text class="load-more-text">加载更多</text>
         </view>
         
-        <view class="info-row" bindtap="callShop">
-          <view class="info-icon">📞</view>
-          <text class="info-text">{{shop.phone}}</text>
+        <view class="loading-more" wx:if="{{isLoadingMore}}">
+          <view class="loading-icon-small"></view>
+          <text class="loading-more-text">加载中...</text>
         </view>
         
-        <view class="info-row">
-          <view class="info-icon">💰</view>
-          <text class="info-text">人均: {{shop.averagePrice}}€</text>
-        </view>
-        
-        <view class="info-row">
-          <view class="info-icon">🕒</view>
-          <text class="info-text">{{shop.openingHours}}</text>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 餐厅介绍 -->
-    <view class="description-card">
-      <view class="card-title">餐厅介绍</view>
-      <text class="description-text">{{shop.description}}</text>
-    </view>
-    
-    <!-- 交通指南 -->
-    <view class="transport-card">
-      <view class="card-title">交通指南</view>
-      <view class="transport-options">
-        <view class="transport-option">
-          <view class="transport-icon">🚇</view>
-          <text class="transport-text">地铁: U2线到慕尼黑中心站</text>
-        </view>
-        <view class="transport-option">
-          <view class="transport-icon">🚌</view>
-          <text class="transport-text">公交: 100/150路到中心广场站</text>
-        </view>
-        <view class="transport-option">
-          <view class="transport-icon">🚶‍♂️</view>
-          <text class="transport-text">步行: 距离玛丽亚广场5分钟</text>
+        <view class="no-more-data" wx:if="{{!hasMoreData && posts.length > 0 && !isLoading}}">
+          <text class="no-more-text">已经到底啦~</text>
         </view>
       </view>
     </view>
   </view>
-
-  <view class="tabbar">
-    <view class="tab-item" bindtap="navigateToRestaurant">
-      <image src="/images/restaurant.png" mode="aspectFit"></image>
-      <text>餐厅</text>
-    </view>
-    <view class="tab-item" bindtap="navigateToForum">
-      <image src="/images/forum.png" mode="aspectFit"></image>
-      <text>饭搭子</text>
-    </view>
-    <view class="tab-item" bindtap="navigateToExplore">
-      <image src="/images/shop.png" mode="aspectFit"></image>
-      <text>探店</text>
-    </view>
-    <view class="tab-item" bindtap="navigateToAccount">
-      <image src="/images/me.png" mode="aspectFit"></image>
-      <text>账号</text>
-    </view>
+  
+  <!-- 底部发帖按钮 -->
+  <view class="floating-button" bindtap="onCreatePost">
+    <text class="float-plus">+</text>
+    <text class="float-text">发布探店</text>
   </view>
 </view>

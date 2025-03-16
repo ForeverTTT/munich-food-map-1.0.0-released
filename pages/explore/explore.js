@@ -1,4 +1,11 @@
 // pages/explore/explore.js
+const db = wx.cloud.database({
+  env: 'cloud1-8gaz8w8x9edb3a42'
+});
+const explore = db.collection('explore');
+const _ = db.command;
+const app = getApp();
+
 Page({
 
   /**
@@ -198,14 +205,53 @@ Page({
         tags: ['面食', '中餐', '经济实惠'],
         description: 'Qin Cheng以其丰富多样的面食选择而闻名，包括拉面、刀削面等多种传统中式面食，口味正宗，价格实惠。',
         cuisine: '面馆'
-      }
-    }
+      },
+    },
+    posts: [],
+    bgImageUrl: '',
+    isLoading: true,
+    userInfo: {},
+    // 分类相关
+    activeCategory: 'all',
+    // 评论相关
+    commentText: '',
+    currentCommentPostId: '',
+    // 分页相关
+    pageSize: 10,
+    page: 0,
+    hasMoreData: true,
+    isLoadingMore: false,
+    totalCount: 0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    // 确保isLoading状态为true
+    this.setData({
+      isLoading: true
+    });
+    
+    // 加载背景图
+    this.loadBgImage();
+    
+    // 先加载用户信息
+    this.loadUserInfo();
+    
+    // 添加一个延迟，确保加载动画能显示一段时间
+    setTimeout(() => {
+      // 加载帖子数据
+      this.loadPosts();
+    }, 1500); // 延迟1.5秒加载数据
+
+    // 如果有分享进入的帖子ID
+    if (options.post_id) {
+      setTimeout(() => {
+        this.scrollToPost(options.post_id);
+      }, 2000);
+    }
+
     if (options.restaurant) {
       try {
         // 解析传递的餐厅数据
@@ -304,7 +350,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-
+    if (this.data.posts.length > 0) {
+      // 如果已经有数据，刷新第一页数据即可
+      this.refreshPosts();
+    } else {
+      this.loadPosts();
+    }
   },
 
   /**
@@ -325,14 +376,22 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-
+    this.setData({
+      page: 0,
+      isLoading: true,
+      hasMoreData: true
+    });
+    this.loadPosts();
+    wx.stopPullDownRefresh();
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom() {
-
+    if (this.data.hasMoreData && !this.data.isLoadingMore) {
+      this.loadMorePosts();
+    }
   },
 
   // 返回上一页
@@ -463,17 +522,461 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {
-    const restaurant = this.data.shop;
-    if (restaurant) {
-      return {
-        title: `推荐给你: ${restaurant.name}`,
-        path: `/pages/explore/explore?restaurant=${encodeURIComponent(JSON.stringify(restaurant))}`
-      };
+  onShareAppMessage(res) {
+    if (res.from === 'button') {
+      const id = res.target.dataset.id;
+      const post = this.data.posts.find(item => item._id === id);
+      
+      if (post) {
+        return {
+          title: `${post.username}分享了${post.shopName}，给了${post.rating}星评价！`,
+          path: `/pages/explore/explore?post_id=${post._id}`,
+          imageUrl: post.images && post.images.length > 0 ? post.images[0] : '../../images/share-image.png'
+        };
+      }
     }
+    
     return {
-      title: '慕村美食地图',
-      path: '/pages/index/index'
+      title: '美食地图 - 探店日记',
+      path: '/pages/explore/explore',
+      imageUrl: '../../images/share-image.png'
     };
-  }
-})
+  },
+
+  // 加载用户信息
+  loadUserInfo: function() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        this.setData({ userInfo });
+      } else {
+        this.setData({
+          userInfo: {
+            username: '美食探店家',
+            userId: new Date().getTime().toString().slice(-8)
+          }
+        });
+        wx.setStorageSync('userInfo', this.data.userInfo);
+      }
+    } catch (e) {
+      console.error('获取用户信息失败', e);
+    }
+  },
+
+  // 刷新帖子 (重置分页并加载第一页)
+  refreshPosts: function() {
+    this.setData({
+      page: 0,
+      hasMoreData: true,
+      posts: []
+    });
+    this.loadPosts();
+  },
+
+  // 加载帖子
+  loadPosts: function() {
+    // 强制设置加载状态为true
+    this.setData({
+      isLoading: true
+    });
+    
+    if (this.data.page > 0) {
+      this.setData({
+        isLoadingMore: true
+      });
+    }
+
+    const page = this.data.page;
+    const pageSize = this.data.pageSize;
+    const category = this.data.activeCategory;
+    
+    let query = explore;
+    
+    // 应用分类筛选
+    if (category !== 'all') {
+      query = query.where({
+        category: category
+      });
+    }
+    
+    // 按时间倒序排列
+    query = query.orderBy('createTime', 'desc');
+    
+    // 分页查询
+    query.skip(page * pageSize).limit(pageSize).get().then(res => {
+      let newPosts = res.data;
+      
+      // 处理用户信息和操作标识
+      const openid = wx.getStorageSync('openid') || '';
+      newPosts = newPosts.map(post => {
+        // 检查是否是自己的帖子
+        post.isOwnPost = post._openid === openid;
+        
+        // 检查是否已点赞
+        if (post.likedBy && post.likedBy.includes(openid)) {
+          post.isLiked = true;
+        }
+        
+        // 格式化时间
+        if (post.createTime) {
+          if (typeof post.createTime === 'object' && post.createTime.toDate) {
+            const date = post.createTime.toDate();
+            post.createTime = this.formatTime(date);
+          } else if (typeof post.createTime === 'string') {
+            // 时间已经是格式化的字符串
+          }
+        }
+        
+        // 初始化评论显示状态
+        post.showComments = false;
+        
+        // 格式化评论时间
+        if (post.comments && post.comments.length) {
+          post.comments = post.comments.map(comment => {
+            if (comment.createTime) {
+              if (typeof comment.createTime === 'object' && comment.createTime.toDate) {
+                const date = comment.createTime.toDate();
+                comment.createTime = this.formatTime(date);
+              }
+            }
+            return comment;
+          });
+        }
+        
+        return post;
+      });
+      
+      // 更新数据
+      if (page === 0) {
+        this.setData({
+          posts: newPosts,
+          isLoading: false,
+          isLoadingMore: false,
+          hasMoreData: newPosts.length === pageSize
+        });
+      } else {
+        this.setData({
+          posts: [...this.data.posts, ...newPosts],
+          isLoading: false,
+          isLoadingMore: false,
+          hasMoreData: newPosts.length === pageSize
+        });
+      }
+    }).catch(err => {
+      console.error('加载帖子失败:', err);
+      this.setData({
+        isLoading: false,
+        isLoadingMore: false
+      });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 加载更多帖子
+  loadMorePosts: function() {
+    if (this.data.isLoadingMore || !this.data.hasMoreData) return;
+    
+    this.setData({
+      page: this.data.page + 1,
+      isLoading: true
+    });
+    
+    this.loadPosts();
+  },
+
+  // 构建查询过滤条件
+  buildQueryFilter: function() {
+    const query = {};
+    const { activeCategory } = this.data;
+    
+    // 根据分类筛选
+    if (activeCategory && activeCategory !== 'all') {
+      query.category = activeCategory;
+    }
+    
+    return query;
+  },
+
+  // 切换分类
+  switchCategory: function(e) {
+    const category = e.currentTarget.dataset.category;
+    this.setData({
+      activeCategory: category,
+      posts: [],
+      page: 0,
+      isLoading: true,
+      hasMoreData: true
+    });
+    this.loadPosts();
+  },
+
+  // 滚动到指定帖子
+  scrollToPost: function(postId) {
+    const posts = this.data.posts;
+    const index = posts.findIndex(p => p._id === postId);
+    
+    if (index > -1) {
+      // 找到了帖子
+      wx.createSelectorQuery()
+        .select(`#post-${postId}`)
+        .boundingClientRect(rect => {
+          wx.pageScrollTo({
+            scrollTop: rect.top,
+            duration: 300
+          });
+        })
+        .exec();
+    }
+  },
+
+  // 点赞功能
+  onLike: function(e) {
+    const id = e.currentTarget.dataset.id;
+    const posts = this.data.posts;
+    const index = posts.findIndex(post => post._id === id);
+    
+    if (index === -1) return;
+    
+    const isLiked = posts[index].isLiked;
+    const openid = wx.getStorageSync('openid');
+    
+    if (!openid) {
+      return wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+    }
+    
+    const post = posts[index];
+    
+    // 更新本地状态
+    posts[index].isLiked = !isLiked;
+    posts[index].likes = isLiked ? (post.likes - 1) : (post.likes + 1 || 1);
+    
+    this.setData({
+      posts: posts
+    });
+    
+    // 更新云数据库
+    explore.doc(id).update({
+      data: {
+        likes: isLiked ? _.inc(-1) : _.inc(1),
+        likedBy: isLiked ? _.pull(openid) : _.addToSet(openid)
+      }
+    }).catch(err => {
+      console.error('点赞操作失败:', err);
+      // 恢复本地状态
+      posts[index].isLiked = isLiked;
+      posts[index].likes = post.likes;
+      this.setData({
+        posts: posts
+      });
+      wx.showToast({
+        title: '操作失败，请重试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 切换评论区显示状态
+  toggleComments: function(e) {
+    const id = e.currentTarget.dataset.id;
+    const posts = this.data.posts;
+    const index = posts.findIndex(post => post._id === id);
+    
+    if (index === -1) return;
+    
+    posts[index].showComments = !posts[index].showComments;
+    
+    this.setData({
+      posts: posts,
+      commentText: '',
+      currentCommentPostId: posts[index].showComments ? id : ''
+    });
+  },
+
+  // 监听评论输入
+  onCommentInput: function(e) {
+    this.setData({
+      commentText: e.detail.value,
+      currentCommentPostId: e.currentTarget.dataset.id
+    });
+  },
+
+  // 提交评论
+  submitComment: function(e) {
+    const id = e.currentTarget.dataset.id;
+    const commentText = this.data.commentText.trim();
+    
+    if (!commentText) {
+      return wx.showToast({
+        title: '评论内容不能为空',
+        icon: 'none'
+      });
+    }
+    
+    const userInfo = wx.getStorageSync('userInfo');
+    const openid = wx.getStorageSync('openid');
+    
+    if (!openid) {
+      return wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+    }
+    
+    // 构建评论对象
+    const comment = {
+      content: commentText,
+      username: userInfo.nickName || '美食探店家',
+      _openid: openid,
+      createTime: new Date(),
+      timestamp: Date.now()
+    };
+    
+    // 更新本地状态
+    const posts = this.data.posts;
+    const index = posts.findIndex(post => post._id === id);
+    
+    if (index === -1) return;
+    
+    // 格式化时间显示
+    const displayComment = {
+      ...comment,
+      createTime: this.formatTime(comment.createTime)
+    };
+    
+    posts[index].comments = posts[index].comments || [];
+    posts[index].comments.push(displayComment);
+    
+    this.setData({
+      posts: posts,
+      commentText: ''
+    });
+    
+    // 更新云数据库
+    explore.doc(id).update({
+      data: {
+        comments: _.push(comment)
+      }
+    }).catch(err => {
+      console.error('提交评论失败:', err);
+      // 恢复本地状态
+      posts[index].comments.pop();
+      this.setData({
+        posts: posts
+      });
+      wx.showToast({
+        title: '评论失败，请重试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 删除帖子
+  deletePost: function(e) {
+    const id = e.currentTarget.dataset.id;
+    
+    wx.showModal({
+      title: '提示',
+      content: '确定要删除这条探店记录吗？',
+      success: res => {
+        if (res.confirm) {
+          // 本地先删除
+          const posts = this.data.posts.filter(post => post._id !== id);
+          this.setData({
+            posts: posts
+          });
+          
+          // 然后更新数据库
+          explore.doc(id).remove().then(res => {
+            wx.showToast({
+              title: '删除成功',
+              icon: 'success'
+            });
+          }).catch(err => {
+            console.error('删除帖子失败:', err);
+            wx.showToast({
+              title: '删除失败',
+              icon: 'none'
+            });
+            // 刷新页面，重新获取数据
+            this.setData({
+              page: 0,
+              isLoading: true
+            });
+            this.loadPosts();
+          });
+        }
+      }
+    });
+  },
+
+  // 创建探店帖子
+  onCreatePost: function() {
+    wx.navigateTo({
+      url: '/pages/explore/post/post'
+    });
+  },
+
+  // 预览图片
+  previewImage: function(e) {
+    const current = e.currentTarget.dataset.current;
+    const urls = e.currentTarget.dataset.urls;
+    
+    wx.previewImage({
+      current: current,
+      urls: urls
+    });
+  },
+
+  // 格式化时间
+  formatTime: function(date) {
+    const now = new Date();
+    const diff = (now - date) / 1000; // 秒差
+    
+    if (diff < 60) {
+      return '刚刚';
+    } else if (diff < 3600) {
+      return Math.floor(diff / 60) + '分钟前';
+    } else if (diff < 86400) {
+      return Math.floor(diff / 3600) + '小时前';
+    } else if (diff < 604800) {
+      return Math.floor(diff / 86400) + '天前';
+    } else {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      return `${year}/${month < 10 ? '0' + month : month}/${day < 10 ? '0' + day : day}`;
+    }
+  },
+  
+  formatNumber: function(n) {
+    n = n.toString();
+    return n[1] ? n : `0${n}`;
+  },
+
+  // 加载背景图片
+  loadBgImage: function() {
+    wx.cloud.getTempFileURL({
+      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/bgimage.png'],
+      success: res => {
+        if (res.fileList && res.fileList.length > 0) {
+          this.setData({
+            bgImageUrl: res.fileList[0].tempFileURL
+          });
+        }
+      },
+      fail: err => {
+        console.error('获取背景图片失败', err);
+        // 设置备用图片
+        this.setData({
+          bgImageUrl: '../../images/bgimage.png'  // 使用本地图片作为备用
+        });
+      }
+    });
+  },
+});

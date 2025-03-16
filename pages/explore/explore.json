@@ -1,8 +1,6 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "餐厅详情",
-  "backgroundTextStyle": "dark",
-  "navigationBarBackgroundColor": "#F97316",
-  "navigationBarTextStyle": "white",
-  "navigationStyle": "custom"
+  "navigationBarTitleText": "餐厅",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f6f7fb"
 }

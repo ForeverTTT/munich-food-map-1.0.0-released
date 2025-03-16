@@ -17,17 +17,35 @@ Page({
     peopleRange: ['1', '2', '3', '4', '5', '6', '7', '8'],
     mealTimeRange: ['午餐', '晚餐', '下午茶', '宵夜'],
     selectedMealTime: '午餐',
-    selectedMealTimeIndex: 0
+    selectedMealTimeIndex: 0,
+    // 分页相关
+    pageSize: 5,       // 每页加载数量
+    currentPage: 0,    // 当前页码
+    hasMoreData: true, // 是否还有更多数据
+    isLoadingMore: false, // 是否正在加载更多
+    totalCount: 0      // 总数据量
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    // 确保isLoading状态为true
+    this.setData({
+      isLoading: true
+    });
+    
+    // 加载背景图
     this.loadBgImage();
+    
+    // 添加一个延迟，确保加载动画能显示一段时间
+    setTimeout(() => {
+      // 加载帖子数据
+      this.loadPosts();
+    }, 1500); // 延迟1.5秒加载数据
+
     this.loadUserInfo();
     this.setDefaultDate();
-    this.loadPosts();
 
     // 如果有分享进入的帖子ID
     if (options.post_id) {
@@ -48,7 +66,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    this.loadPosts();
+    if (this.data.posts.length > 0) {
+      // 如果已经有数据，刷新第一页数据即可
+      this.refreshPosts();
+    } else {
+      this.loadPosts();
+    }
   },
 
   /**
@@ -69,7 +92,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    this.loadPosts();
+    this.refreshPosts();
     wx.stopPullDownRefresh();
   },
 
@@ -77,7 +100,9 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom() {
-
+    if (this.data.hasMoreData && !this.data.isLoading && !this.data.isLoadingMore) {
+      this.loadMorePosts();
+    }
   },
 
   /**
@@ -155,12 +180,46 @@ Page({
     }
   },
 
+  // 刷新帖子 (重置分页并加载第一页)
+  refreshPosts: function() {
+    this.setData({
+      currentPage: 0,
+      hasMoreData: true,
+      posts: []
+    });
+    this.loadPosts();
+  },
+
+  // 加载帖子 (首次加载或刷新)
   loadPosts: function() {
     this.setData({ isLoading: true });
     
     const db = wx.cloud.database();
+    const _ = db.command;
+    const { pageSize, currentPage } = this.data;
+    
+    // 构建查询条件
+    const query = this.buildQueryFilter();
+    
+    // 首先获取总数，用于判断是否还有更多数据
     db.collection('friend')
+      .where(query)
+      .count()
+      .then(res => {
+        this.setData({
+          totalCount: res.total
+        });
+      })
+      .catch(err => {
+        console.error('获取总数失败:', err);
+      });
+    
+    // 查询当前页的数据
+    db.collection('friend')
+      .where(query)
       .orderBy('createTime', 'desc')
+      .skip(currentPage * pageSize)
+      .limit(pageSize)
       .get()
       .then(res => {
         console.log('获取饭搭子帖子成功:', res.data);
@@ -173,9 +232,13 @@ Page({
           };
         });
         
+        // 判断是否还有更多数据
+        const hasMoreData = posts.length === pageSize && (currentPage + 1) * pageSize < this.data.totalCount;
+        
         this.setData({
           posts: posts,
-          isLoading: false
+          isLoading: false,
+          hasMoreData: hasMoreData
         });
         
         // 缓存帖子数据用于离线状态
@@ -215,6 +278,87 @@ Page({
       });
   },
 
+  // 加载更多帖子
+  loadMorePosts: function() {
+    if (!this.data.hasMoreData || this.data.isLoadingMore) {
+      return;
+    }
+    
+    this.setData({ 
+      isLoadingMore: true,
+      currentPage: this.data.currentPage + 1
+    });
+    
+    const db = wx.cloud.database();
+    const { pageSize, currentPage } = this.data;
+    
+    // 构建查询条件
+    const query = this.buildQueryFilter();
+    
+    // 查询下一页数据
+    db.collection('friend')
+      .where(query)
+      .orderBy('createTime', 'desc')
+      .skip(currentPage * pageSize)
+      .limit(pageSize)
+      .get()
+      .then(res => {
+        const newPosts = res.data.map(post => {
+          return {
+            ...post,
+            isOwnPost: post.userId === this.data.userInfo.userId
+          };
+        });
+        
+        // 合并现有数据与新数据
+        const allPosts = [...this.data.posts, ...newPosts];
+        
+        // 判断是否还有更多数据
+        const hasMoreData = newPosts.length === pageSize && allPosts.length < this.data.totalCount;
+        
+        this.setData({
+          posts: allPosts,
+          isLoadingMore: false,
+          hasMoreData: hasMoreData
+        });
+        
+        // 更新缓存
+        this.savePostsToCache(allPosts);
+      })
+      .catch(err => {
+        console.error('加载更多帖子失败:', err);
+        this.setData({ 
+          isLoadingMore: false
+        });
+        
+        wx.showToast({
+          title: '加载更多失败',
+          icon: 'none'
+        });
+      });
+  },
+
+  // 构建查询过滤条件
+  buildQueryFilter: function() {
+    const query = {};
+    const { selectedDate, selectedMealTime, selectedPeople } = this.data;
+    
+    // 只有当用户明确选择了筛选条件时才添加到查询中
+    if (selectedDate && selectedDate !== '全部') {
+      query.date = selectedDate;
+    }
+    
+    if (selectedMealTime && selectedMealTime !== '全部') {
+      query.mealTime = selectedMealTime;
+    }
+    
+    if (selectedPeople && selectedPeople !== '全部' && selectedPeople !== '') {
+      query.peopleCount = selectedPeople;
+    }
+    
+    return query;
+  },
+
   loadBgImage: function() {
     wx.cloud.getTempFileURL({
       fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/bgimage.png'],
@@ -227,9 +371,14 @@ Page({
       },
       fail: err => {
         console.error('获取背景图片失败', err);
+        // 设置备用图片
+        this.setData({
+          bgImageUrl: '../../images/bgimage.png'  // 使用本地图片作为备用
+        });
       }
     });
   },
+
   loadEmptyImage: function() {
     wx.cloud.getTempFileURL({
       fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/empty.png'],
@@ -245,6 +394,7 @@ Page({
       }
     });
   },
+
   navigateToPost: function() {
     wx.navigateTo({
       url: '/pages/friend/post/post'
@@ -288,8 +438,8 @@ Page({
     this.setData({
       selectedDate: e.detail.value
     });
-    // 这里可以根据筛选条件重新加载
-    this.loadPosts();
+    // 重新加载第一页数据
+    this.refreshPosts();
   },
 
   // 餐段选择
@@ -298,8 +448,8 @@ Page({
       selectedMealTime: this.data.mealTimeRange[e.detail.value],
       selectedMealTimeIndex: e.detail.value
     });
-    // 这里可以根据筛选条件重新加载
-    this.loadPosts();
+    // 重新加载第一页数据
+    this.refreshPosts();
   },
 
   // 人数选择
@@ -307,8 +457,8 @@ Page({
     this.setData({
       selectedPeople: this.data.peopleRange[e.detail.value]
     });
-    // 这里可以根据筛选条件重新加载
-    this.loadPosts();
+    // 重新加载第一页数据
+    this.refreshPosts();
   },
   
   // 创建帖子

@@ -4,6 +4,12 @@
   <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
   <view class="banner-overlay"></view>
   
+  <!-- 全屏加载动画 -->
+  <view class="fullscreen-loading" wx:if="{{isLoading && posts.length === 0}}">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+  
   <!-- 头部 -->
   <view class="page-header">
     <view class="title">吃饭搭子</view>
@@ -33,7 +39,7 @@
   </view>
   
   <!-- 加载中提示 -->
-  <view class="loading-container" wx:if="{{isLoading}}">
+  <view class="loading-container" wx:if="{{isLoading && posts.length === 0}}">
     <view class="loading-icon"></view>
     <text class="loading-text">加载中...</text>
   </view>
@@ -46,7 +52,7 @@
   </view>
   
   <!-- 帖子列表 -->
-  <view class="posts-section" wx:if="{{!isLoading && posts.length > 0}}">
+  <view class="posts-section" wx:if="{{posts.length > 0}}">
     <view class="post-list">
       <view class="post-item" wx:for="{{posts}}" wx:key="_id" id="post-{{item._id}}">
         <!-- 删除按钮 -->
@@ -70,7 +76,7 @@
         
         <!-- 帖子内容 -->
         <view class="post-content">
-          <text class="post-text">{{item.description || '该用户并未留下留言~'}}</text>
+          <text class="post-text">{{item.description || '该用户没有留下任何信息~'}}</text>
           <view class="contact-share-row">
             <view wx:if="{{item.wxid}}" class="wxid-container" bindtap="copyWxid" data-wxid="{{item.wxid}}">
               <text class="wxid-label">微信：</text>
@@ -82,6 +88,22 @@
               <text class="share-text">分享</text>
             </button>
           </view>
+        </view>
+      </view>
+      
+      <!-- 底部加载更多区域 -->
+      <view class="load-more-section">
+        <view class="load-more-button" bindtap="loadMorePosts" wx:if="{{hasMoreData && !isLoadingMore && !isLoading}}">
+          <text class="load-more-text">加载更多</text>
+        </view>
+        
+        <view class="loading-more" wx:if="{{isLoadingMore}}">
+          <view class="loading-icon-small"></view>
+          <text class="loading-more-text">加载中...</text>
+        </view>
+        
+        <view class="no-more-data" wx:if="{{!hasMoreData && posts.length > 0 && !isLoading}}">
+          <text class="no-more-text">已经到底啦~</text>
         </view>
       </view>
     </view>
