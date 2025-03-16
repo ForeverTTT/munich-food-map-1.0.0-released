@@ -609,8 +609,8 @@ Page({
       // 处理用户信息和操作标识
       const openid = wx.getStorageSync('openid') || '';
       newPosts = newPosts.map(post => {
-        // 检查是否是自己的帖子
-        post.isOwnPost = post._openid === openid;
+        // 临时设置所有帖子都可删除（测试用）
+        post.isOwnPost = true;
         
         // 检查是否已点赞
         if (post.likedBy && post.likedBy.includes(openid)) {

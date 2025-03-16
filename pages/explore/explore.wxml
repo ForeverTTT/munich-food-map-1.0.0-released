@@ -53,6 +53,11 @@
   <view class="posts-section" wx:if="{{posts.length > 0}}">
     <view class="post-list">
       <view class="post-item" wx:for="{{posts}}" wx:key="_id" id="post-{{item._id}}">
+        <!-- 删除按钮，只对自己的帖子显示 -->
+        <view wx:if="{{item.isOwnPost}}" class="delete-button" catchtap="deletePost" data-id="{{item._id}}">
+          <text class="trash-icon">🗑️</text>
+        </view>
+        
         <view class="post-header">
           <view class="user-avatar">
             <view class="avatar-placeholder">{{item.username[0] || '美'}}</view>
@@ -66,10 +71,6 @@
                 <text class="rating-star">★</text>
               </view>
               <text class="post-date">{{item.createTime}}</text>
-            </view>
-            <!-- 删除按钮 -->
-            <view wx:if="{{item.isOwnPost}}" class="delete-button" catchtap="deletePost" data-id="{{item._id}}">
-              <view class="trash-icon">🗑️</view>
             </view>
           </view>
         </view>

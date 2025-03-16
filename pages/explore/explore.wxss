@@ -214,27 +214,29 @@
 
 .delete-button {
   position: absolute;
-  right: 20rpx;
-  top: 20rpx;
-  width: 50rpx;
-  height: 50rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  top: 15rpx;
+  right: 15rpx;
+  width: 70rpx;
+  height: 70rpx;
   border-radius: 50%;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
-  z-index: 5;
-}
-
-.trash-icon {
-  font-size: 32rpx;
-  color: #ff4d4f;
+  background-color: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  z-index: 10;
+  border: 1rpx solid #ffeeee;
 }
 
 .delete-button:active {
-  transform: scale(0.95);
-  opacity: 0.9;
+  transform: scale(0.9);
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+.trash-icon {
+  font-size: 40rpx;
+  color: #ff3b30;
 }
 
 .post-header {

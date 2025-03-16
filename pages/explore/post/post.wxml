@@ -1,20 +1,27 @@
 <!-- pages/explore/post/post.wxml -->
 <view class="container">
   <view class="page-header">
-    <view class="title">发布探店记录</view>
-    <view class="subtitle">分享你的美食体验</view>
+    <view class="header-content">
+      <view class="back-btn" bindtap="onCancel">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="header-text">
+        <view class="title">发布探店记录</view>
+        <view class="subtitle">分享你的美食体验</view>
+      </view>
+    </view>
   </view>
 
   <view class="form-container">
     <!-- 店铺名称 -->
     <view class="form-group">
-      <view class="form-label">店铺名称 <text class="required">*</text></view>
+      <view class="form-label">店铺名称<text class="required">*</text></view>
       <input class="form-input" placeholder="请输入店铺名称" value="{{shopName}}" bindinput="onShopNameInput" maxlength="30" />
     </view>
 
     <!-- 美食分类 -->
     <view class="form-group">
-      <view class="form-label">美食分类 <text class="required">*</text></view>
+      <view class="form-label">美食分类<text class="required">*</text></view>
       <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="bindCategoryChange">
         <view class="form-picker">
           {{category}}
@@ -25,43 +32,21 @@
 
     <!-- 评分 -->
     <view class="form-group">
-      <view class="form-label">店铺评分 <text class="required">*</text></view>
+      <view class="form-label">店铺评分<text class="required">*</text></view>
       <view class="rating-container">
-        <view 
-          class="rating-star {{rating >= 1 ? 'active' : ''}}" 
-          data-rating="1" 
-          bindtap="setRating">★</view>
-        <view 
-          class="rating-star {{rating >= 2 ? 'active' : ''}}" 
-          data-rating="2" 
-          bindtap="setRating">★</view>
-        <view 
-          class="rating-star {{rating >= 3 ? 'active' : ''}}" 
-          data-rating="3" 
-          bindtap="setRating">★</view>
-        <view 
-          class="rating-star {{rating >= 4 ? 'active' : ''}}" 
-          data-rating="4" 
-          bindtap="setRating">★</view>
-        <view 
-          class="rating-star {{rating >= 5 ? 'active' : ''}}" 
-          data-rating="5" 
-          bindtap="setRating">★</view>
+        <view class="rating-star {{rating >= 1 ? 'active' : ''}}" data-rating="1" bindtap="setRating">★</view>
+        <view class="rating-star {{rating >= 2 ? 'active' : ''}}" data-rating="2" bindtap="setRating">★</view>
+        <view class="rating-star {{rating >= 3 ? 'active' : ''}}" data-rating="3" bindtap="setRating">★</view>
+        <view class="rating-star {{rating >= 4 ? 'active' : ''}}" data-rating="4" bindtap="setRating">★</view>
+        <view class="rating-star {{rating >= 5 ? 'active' : ''}}" data-rating="5" bindtap="setRating">★</view>
+        <view class="rating-text">{{rating ? rating + '星' : '点击评分'}}</view>
       </view>
-      <view class="rating-text">{{rating ? rating + '星' : '点击星星评分'}}</view>
     </view>
 
     <!-- 探店内容 -->
     <view class="form-group">
-      <view class="form-label">探店内容 <text class="required">*</text></view>
-      <textarea 
-        class="form-textarea" 
-        placeholder="分享你的探店体验，例如菜品特色、环境、服务等" 
-        value="{{content}}" 
-        bindinput="onContentInput" 
-        maxlength="500"
-        auto-height
-      ></textarea>
+      <view class="form-label">探店内容<text class="required">*</text></view>
+      <textarea class="form-textarea" placeholder="分享你的探店体验，例如菜品特色、环境、服务等" value="{{content}}" bindinput="onContentInput" maxlength="500" auto-height></textarea>
       <view class="textarea-counter">{{content.length}}/500</view>
     </view>
 
