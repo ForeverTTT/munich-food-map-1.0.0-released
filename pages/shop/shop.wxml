@@ -94,22 +94,4 @@
     </view>
   </view>
 
-  <view class="tabbar">
-    <view class="tab-item" bindtap="switchTab" data-tab="index">
-      <image src="/images/restaurant.png" mode="aspectFit"></image>
-      <text>餐厅</text>
-    </view>
-    <view class="tab-item" bindtap="switchTab" data-tab="friend">
-      <image src="/images/friend.png" mode="aspectFit"></image>
-      <text>饭搭子</text>
-    </view>
-    <view class="tab-item" bindtap="switchTab" data-tab="explore">
-      <image src="/images/explore.png" mode="aspectFit"></image>
-      <text>探店</text>
-    </view>
-    <view class="tab-item" bindtap="switchTab" data-tab="me">
-      <image src="/images/me.png" mode="aspectFit"></image>
-      <text>账号</text>
-    </view>
-  </view>
 </view>

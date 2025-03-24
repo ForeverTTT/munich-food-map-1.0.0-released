@@ -3,14 +3,13 @@
   <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
   <view class="banner-overlay"></view>
   
-  <view class="back-button" bindtap="onBack">返回</view>
   
   <view class="content-wrapper">
     <view class="section app-intro">
       <view class="section-title">关于应用</view>
       <view class="section-content">
         <view class="text-block">
-          欢迎使用慕村美食地图！我们致力于为用户提供慕尼黑美食分享体验。通过我们的平台，您可以：
+          欢迎使用慕村美食集！本应用致力于为用户提供慕尼黑美食分享体验。通过本应用，您可以：
         </view>
         <view class="feature-list">
           <view class="feature-item">
@@ -19,7 +18,7 @@
           </view>
           <view class="feature-item">
             <text class="feature-icon">📝</text>
-            <text class="feature-text">分享美食体验</text>
+            <text class="feature-text">记录美食体验</text>
           </view>
           <view class="feature-item">
             <text class="feature-icon">💫</text>
@@ -33,7 +32,7 @@
       <view class="section-title">开发者简介</view>
       <view class="section-content">
         <view class="text-block">
-          开发者是目前就读于慕尼黑工业大学RCI专业的德区留子，日常偶尔在这个美食荒漠中探店，希望能通过该应用分享一些慕尼黑美食，同时让慕村留子找到志同道合的美食伙伴。
+          开发者是目前就读于慕尼黑工业大学RCI专业的德区留子，日常偶尔在这个美食荒漠中探店，利用闲暇时间制作该应用，分享一些慕尼黑美食，同时让慕村留子在美食荒漠中找到一些乐子。
         </view>
       </view>
     </view>

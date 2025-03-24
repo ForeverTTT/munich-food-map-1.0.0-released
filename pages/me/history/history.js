@@ -6,7 +6,7 @@ Page({
    */
   data: {
     historyRestaurants: [],
-    bgImageUrl: '',
+    bgImageUrl: '/images/munich.png',
     isLoading: true
   },
 
@@ -15,6 +15,7 @@ Page({
    */
   onLoad(options) {
     this.loadBgImage();
+    this.updateHistoryImagePaths();
     this.loadHistoryRestaurants();
   },
 
@@ -30,6 +31,7 @@ Page({
    */
   onShow() {
     this.loadBgImage();
+    this.updateHistoryImagePaths();
     this.loadHistoryRestaurants();
   },
 
@@ -68,6 +70,28 @@ Page({
 
   },
 
+  updateHistoryImagePaths: function() {
+    // 检查浏览历史数据中的图片路径是否完整
+    const history = wx.getStorageSync('historyRestaurants') || [];
+    
+    let needUpdate = false;
+    const updatedHistory = history.map(item => {
+      // 确保image字段存在且有效
+      if (!item.image || item.image === '/images/restaurant.png') {
+        needUpdate = true;
+        // 使用正确的默认图片路径
+        item.image = '/images/logo.png'; 
+      }
+      return item;
+    });
+    
+    if (needUpdate) {
+      // 更新存储的浏览历史数据
+      wx.setStorageSync('historyRestaurants', updatedHistory);
+      console.log('已修复浏览历史数据中的图片路径');
+    }
+  },
+
   loadHistoryRestaurants: function() {
     this.setData({ isLoading: true });
     
@@ -77,34 +101,196 @@ Page({
       const history = wx.getStorageSync('historyRestaurants') || [];
       console.log('加载的历史记录:', history);
       
-      // 再次确保最新的记录在最上方显示
-      // 按时间降序排序 (假设最近的记录在数组前面)
+      // 预先设置默认图片，确保UI不会显示损坏的图片
+      const preparedHistory = history.map(restaurant => {
+        if (!restaurant.image || restaurant.image.includes('cloud://')) {
+          return {
+            ...restaurant,
+            image: '/images/logo.png'
+          };
+        }
+        return restaurant;
+      });
+      
       this.setData({
-        historyRestaurants: history,
+        historyRestaurants: preparedHistory,
         isLoading: false
       });
+      
+      // 加载餐厅图片
+      this.loadCloudRestaurantImages();
     }, 500);
+  },
+  
+  // 从云存储加载餐厅图片
+  loadCloudRestaurantImages: function() {
+    const history = this.data.historyRestaurants;
+    if (!history || history.length === 0) return;
+    
+    // 收集所有需要从云端加载的图片ID
+    const cloudIds = [];
+    const restaurantIndices = {};  // 用于记录每个ID对应的餐厅索引
+    
+    history.forEach((restaurant, index) => {
+      // 尝试多种可能的图片ID来源
+      if (restaurant.cloudImageId) {
+        cloudIds.push(restaurant.cloudImageId);
+        restaurantIndices[restaurant.cloudImageId] = index;
+      }
+      
+      if (restaurant.imageID) {
+        cloudIds.push(restaurant.imageID);
+        restaurantIndices[restaurant.imageID] = index;
+      }
+      
+      // 基于餐厅名称生成特殊图片路径
+      let specialImagePath = null;
+      if (restaurant.name === 'Baoz! Bar') {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/bzb.png';
+      } else if (restaurant.name === 'BANG') {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/bang.png';
+      } else if (restaurant.name && restaurant.name.includes('丝路风味')) {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/slfw.png';
+      } else if (restaurant.name && restaurant.name.includes('悦满楼')) {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/yml.png';
+      } else if (restaurant.name && restaurant.name.includes('匠心')) {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jx.png';
+      } else if (restaurant.name && restaurant.name.includes('小梅')) {
+        specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/xm.png';
+      }
+      
+      if (specialImagePath) {
+        cloudIds.push(specialImagePath);
+        restaurantIndices[specialImagePath] = index;
+      }
+      
+      // 添加基于ID的备选路径
+      if (restaurant.id) {
+        const idBasedPath = `cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/${restaurant.id}.jpg`;
+        cloudIds.push(idBasedPath);
+        restaurantIndices[idBasedPath] = index;
+      }
+    });
+    
+    // 如果没有云存储ID，直接返回
+    if (cloudIds.length === 0) {
+      return;
+    }
+    
+    // 将图片ID分批处理，每批最多20个，减小并发数提高成功率
+    const batchSize = 20;
+    const batches = [];
+    
+    for (let i = 0; i < cloudIds.length; i += batchSize) {
+      batches.push(cloudIds.slice(i, i + batchSize));
+    }
+    
+    // 处理结果记录
+    const successfulUrls = {};
+    let completedBatches = 0;
+    
+    // 处理每一批
+    batches.forEach((batchIds, batchIndex) => {
+      wx.cloud.getTempFileURL({
+        fileList: batchIds,
+        success: res => {
+          if (res.fileList && res.fileList.length > 0) {
+            res.fileList.forEach(file => {
+              if (file.fileID && file.tempFileURL) {
+                // 记录成功获取的URL
+                const index = restaurantIndices[file.fileID];
+                if (index !== undefined) {
+                  successfulUrls[index] = file.tempFileURL;
+                }
+              }
+            });
+          }
+        },
+        fail: err => {
+          console.error(`获取第${batchIndex+1}批次历史餐厅图片失败:`, err);
+        },
+        complete: () => {
+          completedBatches++;
+          
+          // 当所有批次处理完成时，更新餐厅图片
+          if (completedBatches === batches.length) {
+            // 更新所有成功获取到URL的餐厅图片
+            for (const index in successfulUrls) {
+              const key = `historyRestaurants[${index}].image`;
+              this.setData({
+                [key]: successfulUrls[index]
+              });
+              
+              // 同时更新本地存储
+              const history = wx.getStorageSync('historyRestaurants') || [];
+              if (history[index]) {
+                history[index].image = successfulUrls[index];
+                wx.setStorageSync('historyRestaurants', history);
+              }
+            }
+          }
+        }
+      });
+    });
+  },
+  
+  // 处理图片加载失败
+  onImageError: function(e) {
+    try {
+      const index = e.currentTarget.dataset.index;
+      console.error('历史餐厅图片加载失败，使用默认图片，索引:', index);
+      
+      if (index === undefined || index === null) {
+        console.error('图片错误处理失败：未找到索引');
+        return;
+      }
+      
+      // 确保使用正确的默认图片路径
+      const defaultImage = '/images/logo.png';
+      
+      // 更新UI显示
+      const key = `historyRestaurants[${index}].image`;
+      this.setData({
+        [key]: defaultImage
+      });
+      
+      // 更新本地存储
+      const history = wx.getStorageSync('historyRestaurants') || [];
+      if (history[index]) {
+        history[index].image = defaultImage;
+        wx.setStorageSync('historyRestaurants', history);
+      }
+    } catch (error) {
+      console.error('处理图片错误失败:', error);
+    }
   },
 
   removeFromHistory: function(e) {
     const restaurantId = e.currentTarget.dataset.id;
     console.log('正在从历史记录中移除餐厅，ID:', restaurantId);
     
-    let history = wx.getStorageSync('historyRestaurants') || [];
-    console.log('当前历史记录列表:', history);
-    
-    // 从历史记录中移除，确保使用字符串比较以解决ID类型不匹配问题
-    history = history.filter(item => String(item.id) !== String(restaurantId));
-    wx.setStorageSync('historyRestaurants', history);
-    
-    this.setData({
-      historyRestaurants: history
-    });
-    
-    wx.showToast({
-      title: '已从历史记录移除',
-      icon: 'success',
-      duration: 1500
+    wx.showModal({
+      title: '确认移除',
+      content: '确定要从浏览历史中移除此餐厅吗？',
+      success: (res) => {
+        if (res.confirm) {
+          let history = wx.getStorageSync('historyRestaurants') || [];
+          // 从本地存储中移除
+          history = history.filter(item => String(item.id) !== String(restaurantId));
+          wx.setStorageSync('historyRestaurants', history);
+          
+          // 更新UI
+          this.setData({
+            historyRestaurants: history
+          });
+          
+          wx.showToast({
+            title: '已删除',
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      }
     });
   },
 
@@ -145,10 +331,11 @@ Page({
         // 隐藏加载提示
         wx.hideLoading();
         
-        // 通过eventChannel向被打开页面传送数据
+        // 传递餐厅数据，包括ID以便目标页面可以直接从云加载图片
         res.eventChannel.emit('passShopData', {
+          id: restaurant.id,
           name: restaurant.name || '',
-          imageUrl: restaurant.image || '', // 确保图片URL正确传递
+          imageUrl: restaurant.image || '', // 使用从云加载的图片
           address: restaurant.address || ''
         });
       },
@@ -164,32 +351,11 @@ Page({
       }
     });
   },
-
-  onBack: function() {
-    wx.navigateBack();
-  },
-
-  onIconError: function(e) {
-    console.error('返回图标加载失败');
-    // 不做特殊处理，因为我们已经添加了文本作为备用
-  },
-
-  // 处理餐厅图片加载错误
-  onImageError: function(e) {
-    const index = e.currentTarget.dataset.index;
-    console.log('餐厅图片加载失败，使用默认图片', e);
-    
-    // 为避免修改原始数据导致云端同步问题，这里只在UI层面替换图片
-    let key = `historyRestaurants[${index}].image`;
-    this.setData({
-      [key]: '/images/restaurant.png'
-    });
-  },
-
+  
   // 从云存储加载背景图
   loadBgImage: function() {
     wx.cloud.getTempFileURL({
-      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42/images/munich.png'],
+      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/munich.png'],
       success: res => {
         if (res.fileList && res.fileList.length > 0) {
           this.setData({
@@ -211,6 +377,10 @@ Page({
           },
           fail: error => {
             console.error('获取背景图片第二次尝试也失败', error);
+            // 使用本地图片作为最后的备选
+            this.setData({
+              bgImageUrl: '/images/munich.png'
+            });
           }
         });
       }

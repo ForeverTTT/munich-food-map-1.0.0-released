@@ -7,7 +7,6 @@
     <view class="title">我的收藏</view>
   </view>
   
-  <view class="back-button" bindtap="onBack">返回</view>
   
   <view class="content-wrapper">
     <view class="section favorite-intro">
@@ -25,7 +24,16 @@
     <view wx:elif="{{favoriteRestaurants.length > 0}}" class="favorite-list">
       <view class="restaurant-item" wx:for="{{favoriteRestaurants}}" wx:key="id">
         <view class="restaurant-item-inner">
-          <image class="restaurant-image" src="{{item.image}}" mode="aspectFill" lazy-load="true" bindtap="navigateToShop" data-id="{{item.id}}"></image>
+          <image 
+            class="restaurant-image" 
+            src="{{item.image || '/images/logo.png'}}" 
+            mode="aspectFill" 
+            lazy-load="true" 
+            bindtap="navigateToShop" 
+            data-id="{{item.id}}" 
+            binderror="onImageError" 
+            data-index="{{index}}"
+          ></image>
           <view class="restaurant-info">
             <text class="restaurant-name">{{item.name}}</text>
             <view class="star favorite" bindtap="toggleFavorite" data-id="{{item.id}}">★</view>

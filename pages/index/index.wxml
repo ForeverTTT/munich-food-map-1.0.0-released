@@ -3,7 +3,7 @@
   <image class="bg-image" src="{{bgImageUrl}}" mode="aspectFill"></image>
   <view class="banner-overlay"></view>
   <view class="page-header">
-    <view class="title">慕村美食地图</view>
+    <view class="title">慕村美食集</view>
     <view class="search-box">
       <icon type="search" size="14" color="#999"/>
       <input placeholder="搜索餐厅" placeholder-class="placeholder" bindinput="onSearchInput" confirm-type="search" value="{{searchText}}"/>
@@ -11,12 +11,17 @@
     </view>
   </view>
   
-  <view class="filter-bar">
+  <scroll-view class="filter-bar" scroll-x enable-flex>
     <view class="filter-item {{currentFilter === '全部' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="全部">全部</view>
-    <view class="filter-item {{currentFilter === '中餐' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="中餐">中餐</view>
+    <view class="filter-item {{currentFilter === '麻辣烫' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="麻辣烫">麻辣烫</view>
     <view class="filter-item {{currentFilter === '火锅' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="火锅">火锅</view>
     <view class="filter-item {{currentFilter === '面馆' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="面馆">面馆</view>
-  </view>
+    <view class="filter-item {{currentFilter === '川菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="川菜">川菜</view>
+    <view class="filter-item {{currentFilter === '湘菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="湘菜">湘菜</view>
+    <view class="filter-item {{currentFilter === '粤菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="粤菜">粤菜</view>
+    <view class="filter-item {{currentFilter === '新疆菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="新疆菜">新疆菜</view>
+    <view class="filter-item {{currentFilter === '简餐' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="简餐">简餐</view>
+  </scroll-view>
   
   <view class="restaurant-count">
     当前显示 <text class="count-number">{{filteredRestaurants.length}}</text> 家餐馆
@@ -30,7 +35,7 @@
         <view class="restaurant-group">
           <view class="restaurant-item" wx:for="{{restaurantsByLetter[letter]}}" wx:key="id" bindtap="navigateToShop" data-id="{{item.id}}">
             <view class="image-container">
-              <image class="restaurant-image" src="{{item.image}}" mode="aspectFill"/>
+              <image class="restaurant-image" src="{{item.image}}" mode="aspectFill" binderror="onImageError" data-id="{{item.id}}"/>
               <text class="star {{item.favorite ? 'favorite' : ''}}" catchtap="toggleFavorite" data-id="{{item.id}}">★</text>
             </view>
             <view class="restaurant-info">

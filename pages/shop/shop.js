@@ -117,6 +117,8 @@ Page({
       id: shopData.id,
       name: shopData.name,
       image: shopData.imageUrl,
+      imageID: shopData.imageID || null,
+      cloudImageId: shopData.cloudImageId || null,
       address: shopData.address
     });
     
@@ -356,67 +358,172 @@ Page({
       }
     };
 
-    // 从首页获取基本信息
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('passShopData', (data) => {
-      // 清除超时计时器
-      clearTimeout(timeoutId);
-      console.log('接收到餐厅数据:', data);
-      
-      // 确保imageUrl字段存在
-      if (!data.imageUrl) {
-        console.warn('未接收到餐厅图片URL，使用默认图片');
-      } else {
-        console.log('成功接收餐厅图片URL:', data.imageUrl);
-      }
-      
-      // 获取已有详情或使用默认详情
-      const details = restaurantDetails[shopId] || defaultDetails;
-      
-      // 为缺少交通信息的餐厅生成随机交通指南
-      if (!details.transport) {
-        const subway = ['U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8'];
-        const subwayStations = ['Marienplatz', 'Hauptbahnhof', 'Sendlinger Tor', 'Münchner Freiheit', 'Odeonsplatz'];
-        const bus = ['100', '150', '52', '68', '132', '190', '57', '44'];
-        const busStations = ['中心广场站', '主火车站', '市政厅站', '大学区站', '购物中心站'];
+    // 尝试从本地存储或全局数据获取餐厅基本信息
+    let restaurantData = null;
+    try {
+      const allRestaurants = wx.getStorageSync('allRestaurants') || getApp().globalData.restaurants || [];
+      restaurantData = allRestaurants.find(r => String(r.id) === String(shopId));
+    } catch (e) {
+      console.error('获取存储的餐厅数据失败', e);
+    }
+
+    // 如果从本地缓存或全局数据未找到餐厅，尝试从通道获取
+    if (!restaurantData) {
+      try {
+        // 从首页获取基本信息
+        const eventChannel = this.getOpenerEventChannel();
         
-        details.transport = {
-          subway: `${subway[Math.floor(Math.random() * subway.length)]}线到${subwayStations[Math.floor(Math.random() * subwayStations.length)]}站`,
-          bus: `${bus[Math.floor(Math.random() * bus.length)]}/${parseInt(bus[Math.floor(Math.random() * bus.length)]) + 10}路到${busStations[Math.floor(Math.random() * busStations.length)]}`
-        };
-      }
-      
-      // 组合完整的餐厅数据
-      const shopData = {
-        id: shopId,
-        name: data.name || '未知餐厅',
-        imageUrl: data.imageUrl || '/images/default-restaurant.jpg',
-        address: data.address || '地址未知',
-        phone: details.phone || '无',
-        price: details.price || 15,
-        rating: details.rating || 4.5,
-        hours: details.hours || '周一至周日 11:00-22:00',
-        tags: details.tags || ['中餐', '经济实惠'],
-        description: details.description || `${data.name}提供正宗的中式美食，口味地道，价格实惠，环境舒适。`,
-        cuisine: details.cuisine || '中餐馆',
-        transport: details.transport || {
-          subway: 'U1/U2/U3线到Marienplatz站',
-          bus: '100/150路到中心广场站'
+        // 检查eventChannel是否存在且具有on方法
+        if (eventChannel && typeof eventChannel.on === 'function') {
+          console.log('尝试从eventChannel获取餐厅数据');
+          eventChannel.on('passShopData', (data) => {
+            // 清除超时计时器
+            clearTimeout(timeoutId);
+            console.log('接收到餐厅数据:', data);
+            this.processAndDisplayRestaurantData(data, shopId, restaurantDetails, defaultDetails);
+          });
+          return; // 等待事件回调
+        } else {
+          console.warn('eventChannel不存在或没有on方法');
         }
+      } catch (e) {
+        console.error('获取eventChannel失败', e);
+      }
+    }
+
+    // 如果有缓存数据或eventChannel失败，直接处理数据
+    this.processAndDisplayRestaurantData(restaurantData || {}, shopId, restaurantDetails, defaultDetails);
+    clearTimeout(timeoutId);
+  },
+
+  // 处理并显示餐厅数据
+  processAndDisplayRestaurantData: function(data, shopId, restaurantDetails, defaultDetails) {
+    // 获取已有详情或使用默认详情
+    const details = restaurantDetails[shopId] || defaultDetails;
+    
+    // 为缺少交通信息的餐厅生成随机交通指南
+    if (!details.transport) {
+      const subway = ['U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8'];
+      const subwayStations = ['Marienplatz', 'Hauptbahnhof', 'Sendlinger Tor', 'Münchner Freiheit', 'Odeonsplatz'];
+      const bus = ['100', '150', '52', '68', '132', '190', '57', '44'];
+      const busStations = ['中心广场站', '主火车站', '市政厅站', '大学区站', '购物中心站'];
+      
+      details.transport = {
+        subway: `${subway[Math.floor(Math.random() * subway.length)]}线到${subwayStations[Math.floor(Math.random() * subwayStations.length)]}站`,
+        bus: `${bus[Math.floor(Math.random() * bus.length)]}/${parseInt(bus[Math.floor(Math.random() * bus.length)]) + 10}路到${busStations[Math.floor(Math.random() * busStations.length)]}`
       };
-      
-      // 更新页面数据
-      this.setData({
-        shopData: shopData,
-        loading: false,
-        error: false
-      });
-      
+    }
+    
+    // 组合完整的餐厅数据
+    const shopData = {
+      id: shopId,
+      name: data.name || '未知餐厅',
+      imageUrl: data.image || data.imageUrl || '/images/logo.png',
+      imageID: data.imageID || null,
+      cloudImageId: data.cloudImageId || null,
+      address: data.address || '地址未知',
+      phone: details.phone || '无',
+      price: details.price || 15,
+      rating: details.rating || 4.5,
+      hours: details.hours || '周一至周日 11:00-22:00',
+      tags: details.tags || ['中餐', '经济实惠'],
+      description: details.description || '提供正宗的中式美食，口味地道，价格实惠，环境舒适。',
+      cuisine: details.cuisine || '中餐馆',
+      transport: details.transport || {
+        subway: 'U1线到Marienplatz站',
+        bus: '100/150路到中心广场站'
+      }
+    };
+    
+    // 加载餐厅图片
+    this.loadShopImage(shopData);
+    
+    // 更新页面数据
+    this.setData({
+      shopData: shopData,
+      loading: false,
+      error: false
+    }, () => {
       // 保存到浏览历史
       this.saveToHistory(shopData);
       
       // 记录加载完成的数据
       console.log('餐厅数据加载完成:', shopData);
+    });
+  },
+
+  // 加载餐厅图片
+  loadShopImage: function(shopData) {
+    if (!shopData) return;
+
+    // 先设置默认图片，确保界面有内容显示
+    if (!shopData.imageUrl || shopData.imageUrl.indexOf('cloud://') !== -1) {
+      shopData.imageUrl = '/images/logo.png';
+      this.setData({
+        'shopData.imageUrl': shopData.imageUrl
+      });
+    }
+
+    // 尝试从多个来源加载图片
+    let imageIds = [];
+    
+    // 添加原有的图片ID
+    if (shopData.cloudImageId) {
+      imageIds.push(shopData.cloudImageId);
+    }
+    
+    if (shopData.imageID) {
+      imageIds.push(shopData.imageID);
+    }
+    
+    // 根据餐厅ID和名称构建可能的图片路径
+    const shopId = shopData.id;
+    const firstLetter = shopData.name ? shopData.name.charAt(0).toLowerCase() : '';
+    
+    // 特殊餐厅图片路径处理
+    let specialImagePath = null;
+    if (shopData.name === 'Baoz! Bar') {
+      specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/bzb.png';
+    } else if (shopData.name === 'BANG') {
+      specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/bang.png';
+    } else if (shopData.name.includes('丝路风味')) {
+      specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/slfw.png';
+    } else if (shopData.name.includes('悦满楼')) {
+      specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/yml.png';
+    } else if (shopData.name.includes('匠心')) {
+      specialImagePath = 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jx.png';
+    }
+    
+    if (specialImagePath) {
+      imageIds.push(specialImagePath);
+    }
+    
+    // 如果没有图片ID，直接返回
+    if (imageIds.length === 0) {
+      return;
+    }
+    
+    // 获取图片临时URL
+    wx.cloud.getTempFileURL({
+      fileList: imageIds,
+      success: res => {
+        if (res.fileList && res.fileList.length > 0) {
+          // 找到第一个成功的临时URL
+          for (let i = 0; i < res.fileList.length; i++) {
+            if (res.fileList[i].tempFileURL) {
+              shopData.imageUrl = res.fileList[i].tempFileURL;
+              this.setData({
+                'shopData.imageUrl': shopData.imageUrl
+              });
+              console.log('成功加载餐厅图片:', shopData.imageUrl);
+              break;
+            }
+          }
+        }
+      },
+      fail: err => {
+        console.error('获取餐厅云存储图片失败:', err);
+      }
     });
   },
 
@@ -595,12 +702,16 @@ Page({
       },
       fail: err => {
         console.error('获取背景图片失败', err);
+        // 失败时使用本地图片作为备选
+        this.setData({
+          bgImageUrl: '/images/bgimage.png'
+        });
       }
     });
   },
 
   onImageError: function(e) {
-    console.error('餐厅图片加载失败，使用默认图片', e);
+    console.error('餐厅图片加载失败，使用默认图片');
     this.setData({
       'shopData.imageUrl': '/images/logo.png'
     });

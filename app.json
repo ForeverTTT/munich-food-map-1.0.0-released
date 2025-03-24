@@ -2,11 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/logs/logs",
-    "pages/friend/friend",
-    "pages/friend/post/post",
     "pages/me/me",
-    "pages/explore/explore",
-    "pages/explore/post/post",
     "pages/webview/webview",
     "pages/shop/shop",
     "pages/me/about/about",
@@ -39,20 +35,20 @@
         "selectedIconPath": "images/restaurant.png"
       },
       {
-        "pagePath": "pages/friend/friend",
-        "text": "饭搭子",
+        "pagePath": "pages/me/favourate/favourate",
+        "text": "收藏",
         "iconPath": "images/friend.png",
         "selectedIconPath": "images/friend.png"
       },
       {
-        "pagePath": "pages/explore/explore",
-        "text": "探店",
+        "pagePath": "pages/me/history/history",
+        "text": "浏览历史",
         "iconPath": "images/explore.png",
         "selectedIconPath": "images/explore.png"
       },
       {
-        "pagePath": "pages/me/me",
-        "text": "账号",
+        "pagePath": "pages/me/about/about",
+        "text": "关于",
         "iconPath": "images/me.png",
         "selectedIconPath": "images/me.png"
       }

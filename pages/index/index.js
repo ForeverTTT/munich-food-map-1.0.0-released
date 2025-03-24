@@ -665,6 +665,89 @@ Page({
         hours: '周一至周日 11:00-22:00',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/m4l.jpg',
         letter: 'M'
+      },
+      {
+        id: 51,
+        name: '茶艺 Chayee Munich',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/cy.png',
+        image: '',
+        favorite: false,
+        address: 'Leopoldstraße 48, 80802 München',
+        cuisine: '奶茶店',
+        price: '5-15€',
+        hours: '周一至周日 11:00-22:00',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/cy.jpg',
+        letter: 'C'
+      },
+      {
+        id: 52,
+        name: '丝路风味 KEBUP 22',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/slfw.png',
+        image: '',
+        favorite: false,
+        address: 'Hohenzollernstraße 22, 80801 München',
+        cuisine: '新疆菜',
+        price: '10-20€',
+        hours: '周一至周日 00:00-23:59',
+        phone: '+49 15209183811',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/sl.jpg',
+        letter: 'S'
+      },
+      {
+        id: 53,
+        name: '悦满楼',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/yml.png',
+        image: '',
+        favorite: false,
+        address: 'Ehrwalder Str. 77, 81377 München',
+        cuisine: '云南菜',
+        price: '20-30€',
+        hours: '周一至周日 11:30-22:30',
+        phone: '+49 89 89839766',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/yml.jpg',
+        letter: 'Y'
+      },
+      {
+        id: 54,
+        name: '老金中餐馆',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/lj.png',
+        image: '',
+        favorite: false,
+        address: 'Kanalstraße 14, 80538 München',
+        cuisine: '中餐馆',
+        price: '50€',
+        hours: '周二至周日 18:00-23:00',
+        phone: '+49 8921949970',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/lj.jpg',
+        letter: 'L'
+      },
+      {
+        id: 55,
+        name: '小梅中餐馆 Mai Garten',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/xm.png',
+        image: '',
+        favorite: false,
+        address: 'Buttermelcherstraße 5, 80469 München',
+        cuisine: '中餐馆',
+        price: '20-30€',
+        hours: '周一至周六 11:00-22:30',
+        phone: '+49 8924211197',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/xm.jpg',
+        letter: 'X'
+      },
+      {
+        id: 56,
+        name: '匠心',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jx.png',
+        image: '',
+        favorite: false,
+        address: 'Nymphenburger Str. 98, 80636 München',
+        cuisine: '中餐馆',
+        price: '20-30€',
+        hours: '周一至周日 11:30-22:30',
+        phone: '+49 8937779637',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/jx.jpg',
+        letter: 'J'
       }
     ],
     filteredRestaurants: [],
@@ -724,6 +807,9 @@ Page({
     // 按拼音首字母对餐厅进行分组
     this.sortRestaurantsByPinyin();
     
+    // 存储所有餐厅数据到本地存储
+    wx.setStorageSync('allRestaurants', this.data.restaurants);
+    
     if (wx.getUserProfile) {
       this.setData({
         canIUseGetUserProfile: true
@@ -733,6 +819,9 @@ Page({
   onShow() {
     this.loadFavoriteStatus();
     this.applyFilters();
+    
+    // 确保餐厅数据在本地存储中是最新的
+    wx.setStorageSync('allRestaurants', this.data.restaurants);
   },
   sortRestaurantsByPinyin: function() {
     const restaurants = this.data.restaurants;
@@ -771,7 +860,7 @@ Page({
       '方': 'F', '肥': 'F', '福': 'F', '范': 'F',
       '高': 'G', '古': 'G', '广': 'G', '国': 'G',
       '海': 'H', '好': 'H', '汉': 'H', '湖': 'H', '悠': 'Y',
-      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J',
+      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J', '匠': 'J',
       '开': 'K', '康': 'K', '烤': 'K',
       '老': 'L', '乐': 'L', '里': 'L', '辣': 'L', '零': 'L', '鹿': 'L',
       '麻': 'M', '美': 'M', '面': 'M', '马': 'M', '慢': 'M',
@@ -780,10 +869,10 @@ Page({
       '朋': 'P', '平': 'P',
       '七': 'Q', '强': 'Q', '青': 'Q', '千': 'Q',
       '日': 'R', '人': 'R',
-      '三': 'S', '山': 'S', '上': 'S', '深': 'S', '水': 'S', '四': 'S', '送': 'S',
+      '三': 'S', '山': 'S', '上': 'S', '深': 'S', '水': 'S', '四': 'S', '送': 'S', '丝': 'S',
       '太': 'T', '汤': 'T', '天': 'T', '甜': 'T', '唐': 'T',
       '西': 'X', '湘': 'X', '小': 'X', '鲜': 'X', '香': 'X',
-      '洋': 'Y', '一': 'Y', '宴': 'Y', '杨': 'Y', '游': 'Y',
+      '洋': 'Y', '一': 'Y', '宴': 'Y', '杨': 'Y', '游': 'Y', '悦': 'Y',
       '粥': 'Z', '中': 'Z', '张': 'Z', '珠': 'Z', '竹': 'Z', '鼎': 'D'
     };
     
@@ -911,8 +1000,13 @@ Page({
           id: restaurant.id,
           name: restaurant.name,
           image: restaurant.image,
+          imageID: restaurant.imageID,
+          cloudImageId: restaurant.cloudImageId,
           address: restaurant.address,
-          cuisine: restaurant.cuisine
+          cuisine: restaurant.cuisine,
+          price: restaurant.price,
+          hours: restaurant.hours,
+          letter: restaurant.letter
         });
       }
       
@@ -962,14 +1056,34 @@ Page({
       // 使用图片URL
       const imageUrl = restaurant.image || '';
       
+      // 确保所有餐厅数据在本地存储中是最新的
+      wx.setStorageSync('allRestaurants', this.data.restaurants);
+      
       wx.navigateTo({
         url: '/pages/shop/shop?id=' + restaurantId,
         success: function(res) {
           // 通过eventChannel向被打开页面传送数据
-          res.eventChannel.emit('passShopData', {
-            name: restaurant.name,
-            imageUrl: imageUrl,
-            address: restaurant.address
+          try {
+            if (res.eventChannel && typeof res.eventChannel.emit === 'function') {
+              res.eventChannel.emit('passShopData', {
+                name: restaurant.name,
+                imageUrl: imageUrl,
+                imageID: restaurant.imageID,
+                cloudImageId: restaurant.cloudImageId,
+                address: restaurant.address
+              });
+            } else {
+              console.warn('eventChannel不可用，已将数据存储在本地');
+            }
+          } catch (err) {
+            console.error('传递餐厅数据失败:', err);
+          }
+        },
+        fail: function(err) {
+          console.error('导航到餐厅页面失败:', err);
+          wx.showToast({
+            title: '打开餐厅详情失败',
+            icon: 'none'
           });
         }
       });
@@ -987,35 +1101,109 @@ Page({
   },
   // 加载餐厅图片
   loadRestaurantImages: function() {
-    // 获取所有餐厅的图片ID
-    const imageIDs = this.data.restaurants.map(restaurant => restaurant.imageID);
-    
-    // 批量获取临时URL
-    wx.cloud.getTempFileURL({
-      fileList: imageIDs,
-      success: res => {
-        const fileList = res.fileList;
-        
-        // 更新餐厅数据
-        const restaurants = this.data.restaurants.map(restaurant => {
-          const file = fileList.find(file => file.fileID === restaurant.imageID);
-          if (file && file.tempFileURL) {
-            restaurant.image = file.tempFileURL;
-          }
-          return restaurant;
-        });
-        
-        this.setData({
-          restaurants: restaurants
-        });
-        
-        // 应用过滤
-        this.applyFilters();
-      },
-      fail: err => {
-        console.error('获取餐厅图片失败', err);
+    // 先获取所有云存储图片的临时URL，再设置图片
+    const cloudIds = [];
+    this.data.restaurants.forEach(restaurant => {
+      if (restaurant.imageID && restaurant.imageID.indexOf('cloud://') === 0) {
+        cloudIds.push(restaurant.imageID);
+      }
+      if (restaurant.cloudImageId && restaurant.cloudImageId.indexOf('cloud://') === 0) {
+        cloudIds.push(restaurant.cloudImageId);
       }
     });
+    
+    // 如果没有云存储ID，直接应用过滤器
+    if (cloudIds.length === 0) {
+      this.applyFilters();
+      return;
+    }
+    
+    // 将云存储ID分批处理，每批最多50个
+    const batchSize = 50;
+    const batches = [];
+    
+    for (let i = 0; i < cloudIds.length; i += batchSize) {
+      batches.push(cloudIds.slice(i, i + batchSize));
+    }
+    
+    // 处理每一批
+    let completedBatches = 0;
+    const urlMap = {};
+    
+    batches.forEach((batchIds, index) => {
+      wx.cloud.getTempFileURL({
+        fileList: batchIds,
+        success: res => {
+          if (res.fileList && res.fileList.length > 0) {
+            res.fileList.forEach(file => {
+              if (file.fileID && file.tempFileURL) {
+                urlMap[file.fileID] = file.tempFileURL;
+              }
+            });
+          }
+        },
+        fail: err => {
+          console.error(`获取第${index+1}批临时URL失败:`, err);
+        },
+        complete: () => {
+          completedBatches++;
+          
+          // 当所有批次处理完成时，更新餐厅图片
+          if (completedBatches === batches.length) {
+            this.updateRestaurantImages(urlMap);
+          }
+        }
+      });
+    });
+  },
+  
+  // 更新餐厅图片URL
+  updateRestaurantImages: function(urlMap) {
+    // 更新餐厅图片URL
+    const updatedRestaurants = this.data.restaurants.map(restaurant => {
+      // 优先使用imageID的临时URL
+      if (restaurant.imageID && urlMap[restaurant.imageID]) {
+        restaurant.image = urlMap[restaurant.imageID];
+      } 
+      // 其次使用cloudImageId的临时URL
+      else if (restaurant.cloudImageId && urlMap[restaurant.cloudImageId]) {
+        restaurant.image = urlMap[restaurant.cloudImageId];
+      }
+      // 如果都没有，使用默认图片
+      else {
+        restaurant.image = '/images/logo.png';
+      }
+      return restaurant;
+    });
+    
+    // 更新数据
+    this.setData({
+      restaurants: updatedRestaurants
+    }, () => {
+      // 应用过滤
+      this.applyFilters();
+    });
+  },
+
+  // 处理图片加载失败
+  onImageError: function(e) {
+    const id = e.currentTarget.dataset.id;
+    console.log('首页餐厅图片加载失败，ID:', id);
+    
+    // 查找餐厅并更新图片
+    const restaurants = this.data.restaurants;
+    const index = restaurants.findIndex(r => String(r.id) === String(id));
+    
+    if (index !== -1) {
+      const restaurant = restaurants[index];
+      console.log('图片加载失败的餐厅:', restaurant.name);
+      
+      // 使用默认图片
+      const key = `restaurants[${index}].image`;
+      this.setData({
+        [key]: '/images/logo.png'
+      });
+    }
   },
   loadBgImage: function() {
     wx.cloud.getTempFileURL({
