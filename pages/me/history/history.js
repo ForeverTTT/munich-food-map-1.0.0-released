@@ -269,28 +269,21 @@ Page({
     const restaurantId = e.currentTarget.dataset.id;
     console.log('正在从历史记录中移除餐厅，ID:', restaurantId);
     
-    wx.showModal({
-      title: '确认移除',
-      content: '确定要从浏览历史中移除此餐厅吗？',
-      success: (res) => {
-        if (res.confirm) {
-          let history = wx.getStorageSync('historyRestaurants') || [];
-          // 从本地存储中移除
-          history = history.filter(item => String(item.id) !== String(restaurantId));
-          wx.setStorageSync('historyRestaurants', history);
-          
-          // 更新UI
-          this.setData({
-            historyRestaurants: history
-          });
-          
-          wx.showToast({
-            title: '已删除',
-            icon: 'success',
-            duration: 1500
-          });
-        }
-      }
+    // 直接删除，不再显示确认对话框
+    let history = wx.getStorageSync('historyRestaurants') || [];
+    // 从本地存储中移除
+    history = history.filter(item => String(item.id) !== String(restaurantId));
+    wx.setStorageSync('historyRestaurants', history);
+    
+    // 更新UI
+    this.setData({
+      historyRestaurants: history
+    });
+    
+    wx.showToast({
+      title: '已删除',
+      icon: 'success',
+      duration: 1500
     });
   },
 

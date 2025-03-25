@@ -39,7 +39,7 @@
 }
 
 .title {
-  font-size: 40rpx;
+  font-size: 42rpx;
   color: #ffffff;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -53,7 +53,7 @@
 }
 
 .content-wrapper {
-  padding: 240rpx 30rpx 30rpx;
+  padding: 240rpx 29rpx;
   position: relative;
   z-index: 3;
 }
@@ -107,6 +107,20 @@
   box-shadow: 0 20rpx 20rpx rgba(0, 0, 0, 0.05);
 }
 
+/* 添加蓝色条样式 */
+.restaurant-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8rpx;
+  height: 100%;
+  background: linear-gradient(to bottom, rgb(160, 192, 243), rgb(111, 113, 240));
+  border-top-left-radius: 20rpx;
+  border-bottom-left-radius: 20rpx;
+  z-index: 2;
+}
+
 .restaurant-image {
   width: 100%;
   height: 220rpx;
@@ -149,18 +163,41 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #ffffff;
-  font-size: 28rpx;
   border-radius: 50%;
-  background-color:rgb(255, 95, 67);
-  box-shadow: 0 4rpx 8rpx rgba(255, 114, 67, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
 
 .delete-icon:active {
-  transform: scale(1.1);
-  background-color:rgb(249, 56, 22);
-  box-shadow: 0 4rpx 12rpx rgba(249, 115, 22, 0.4);
+  transform: scale(0.9);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
+}
+
+.cross-icon {
+  position: relative;
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.cross-icon:before,
+.cross-icon:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 3rpx;
+  background-color: #ff4d4f;
+  border-radius: 2rpx;
+  top: 50%;
+  left: 0;
+}
+
+.cross-icon:before {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.cross-icon:after {
+  transform: translateY(-50%) rotate(-45deg);
 }
 
 .loading-container {

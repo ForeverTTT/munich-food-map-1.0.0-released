@@ -11,7 +11,7 @@
     </view>
   </view>
   
-  <scroll-view class="filter-bar" scroll-x enable-flex>
+  <scroll-view class="filter-bar" scroll-x enable-flex enhanced show-scrollbar="false">
     <view class="filter-item {{currentFilter === '全部' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="全部">全部</view>
     <view class="filter-item {{currentFilter === '麻辣烫' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="麻辣烫">麻辣烫</view>
     <view class="filter-item {{currentFilter === '火锅' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="火锅">火锅</view>
@@ -21,6 +21,7 @@
     <view class="filter-item {{currentFilter === '粤菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="粤菜">粤菜</view>
     <view class="filter-item {{currentFilter === '新疆菜' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="新疆菜">新疆菜</view>
     <view class="filter-item {{currentFilter === '简餐' ? 'active' : ''}}" bindtap="onFilterTap" data-filter="简餐">简餐</view>
+    <view style="width: 40rpx; flex-shrink: 0;"></view>
   </scroll-view>
   
   <view class="restaurant-count">

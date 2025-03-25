@@ -46,7 +46,7 @@
               class="delete-icon" 
               catchtap="removeFromHistory" 
               data-id="{{item.id}}">
-              <text class="iconfont icon-delete"></text>
+              <view class="cross-icon"></view>
             </view>
           </view>
         </view>

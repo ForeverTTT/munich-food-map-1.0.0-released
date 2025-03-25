@@ -147,10 +147,18 @@ page {
   display: flex;
   white-space: nowrap;
   background: rgba(255, 255, 255, 0.85);
-  padding: 8rpx 24rpx;
+  padding: 8rpx 24rpx 8rpx 24rpx;
+  padding-right: 0;
   z-index: 27;
   backdrop-filter: blur(10rpx);
   box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.filter-bar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
 }
 
 .filter-item {
@@ -166,6 +174,11 @@ page {
   transition: all 0.3s ease;
   box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.05);
   border: 1rpx solid #f2f2f2;
+  flex-shrink: 0;
+}
+
+.filter-item:last-of-type {
+  margin-right: 16rpx;
 }
 
 .filter-item.active {

@@ -35,7 +35,10 @@
             data-index="{{index}}"
           ></image>
           <view class="restaurant-info">
-            <text class="restaurant-name">{{item.name}}</text>
+            <view class="restaurant-info-content">
+              <text class="restaurant-name">{{item.name}}</text>
+              <text class="restaurant-address">{{item.address}}</text>
+            </view>
             <view class="star favorite" bindtap="toggleFavorite" data-id="{{item.id}}">★</view>
           </view>
         </view>
