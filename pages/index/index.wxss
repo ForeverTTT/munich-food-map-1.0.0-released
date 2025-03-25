@@ -209,7 +209,6 @@ page {
   margin-top: 6rpx;
   width: calc(100% - 48rpx);
   min-height: calc(100vh - 480rpx);
-  padding-bottom: 120rpx;
 }
 
 .letter-header {

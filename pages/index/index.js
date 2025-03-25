@@ -778,9 +778,9 @@ Page({
         letter: 'M'
       },
       {
-        id: 58,
+        id: 59,
         name: '饺子吧 Gyoza bar',
-        imageID: '	cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jzb.png',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jzb.png',
         image: '',
         favorite: false,
         address: 'Augustenstraße 47, 80333 München',
@@ -788,7 +788,7 @@ Page({
         price: '10-20€',
         hours: '周一至周日 11:30-22:30',
         phone: '无',
-        cloudImageId: '	cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/jzb.png',
+        cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/jzb.png',
         letter: 'J'
       },
     ],
@@ -902,7 +902,7 @@ Page({
       '方': 'F', '肥': 'F', '福': 'F', '范': 'F',
       '高': 'G', '古': 'G', '广': 'G', '国': 'G',
       '海': 'H', '好': 'H', '汉': 'H', '湖': 'H', '悠': 'Y',
-      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J', '匠': 'J',
+      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J', '匠': 'J', '饺': 'J',
       '开': 'K', '康': 'K', '烤': 'K',
       '老': 'L', '乐': 'L', '里': 'L', '辣': 'L', '零': 'L', '鹿': 'L',
       '麻': 'M', '美': 'M', '面': 'M', '马': 'M', '慢': 'M',
