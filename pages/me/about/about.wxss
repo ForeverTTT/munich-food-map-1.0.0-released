@@ -1,8 +1,9 @@
 /* pages/me/about/about.wxss */
 .container {
-  min-height: 100vh;
+  min-height: 100%;
   position: relative;
   background-color: #f5f5f5;
+  overflow: hidden;
 }
 
 .bg-image {
@@ -115,7 +116,8 @@
 
 .version-info {
   text-align: center;
-  margin-top: 40rpx;
+  margin-top: 20rpx;
+  margin-bottom: 0;
 }
 
 .version-text {

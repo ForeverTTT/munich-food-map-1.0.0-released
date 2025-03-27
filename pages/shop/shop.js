@@ -93,6 +93,21 @@ Page({
 
   },
 
+  // 复制餐厅地址
+  copyAddress: function(e) {
+    const address = e.currentTarget.dataset.address;
+    wx.setClipboardData({
+      data: address,
+      success: function() {
+        wx.showToast({
+          title: '地址已复制',
+          icon: 'success',
+          duration: 1500
+        });
+      }
+    });
+  },
+
   saveToHistory: function(shopData) {
     if (!shopData || !shopData.id) {
       console.warn('保存历史记录: 无效的餐厅数据', shopData);

@@ -23,8 +23,9 @@
     </view>
 
     <view wx:elif="{{historyRestaurants.length === 0}}" class="empty-state">
-      <image src="/images/empty.png" mode="aspectFit"></image>
-      <text>您还没有浏览过餐厅</text>
+      <view class="empty-icon">📝</view>
+      <text class="empty-text">暂无浏览过的餐厅</text>
+      <text class="empty-subtext">去探索更多美食吧</text>
     </view>
 
     <view wx:else class="favorite-list">

@@ -367,8 +367,9 @@ page {
 
 .info-row {
   display: flex;
+  margin-bottom: 20rpx;
   align-items: flex-start;
-  margin-bottom: 24rpx;
+  position: relative;
 }
 
 .info-icon {
@@ -384,10 +385,17 @@ page {
   flex-direction: column;
 }
 
+.address-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .info-text {
   font-size: 28rpx;
   color: #333;
   line-height: 1.4;
+  margin-right: 10rpx;
 }
 
 .tags-container {
@@ -467,4 +475,18 @@ page {
   font-size: 28rpx;
   color: #e53e3e;
   margin-bottom: 30rpx;
+}
+
+/* 复制按钮样式 */
+.copy-address {
+  font-size: 22rpx;
+  color: #1989fa;
+  background-color: rgba(25, 137, 250, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  display: inline-block;
+}
+
+.copy-address:active {
+  opacity: 0.8;
 }

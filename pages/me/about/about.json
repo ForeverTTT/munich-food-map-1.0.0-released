@@ -2,5 +2,7 @@
   "usingComponents": {},
   "navigationBarTitleText": "关于应用",
   "navigationBarBackgroundColor": "#ffffff",
-  "navigationBarTextStyle": "black"
+  "navigationBarTextStyle": "black",
+  "disableScroll": true,
+  "enablePullDownRefresh": false
 }

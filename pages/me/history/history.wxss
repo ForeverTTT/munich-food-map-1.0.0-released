@@ -53,7 +53,7 @@
 }
 
 .content-wrapper {
-  padding: 240rpx 29rpx;
+  padding: 240rpx 29rpx 0 29rpx;
   position: relative;
   z-index: 3;
 }
@@ -225,24 +225,33 @@
 }
 
 .empty-state {
-  padding: 80rpx 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 100rpx 30rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+  margin-top: 40rpx;
 }
 
-.empty-state image {
-  width: 200rpx;
-  height: 200rpx;
-  margin-bottom: 30rpx;
-  opacity: 0.7;
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
 }
 
-.empty-state text {
-  font-size: 30rpx;
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+}
+
+.empty-subtext {
+  font-size: 28rpx;
   color: #999;
-  margin-bottom: 40rpx;
 }
 
 /* 图标字体 */

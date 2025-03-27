@@ -47,7 +47,10 @@
         <view class="info-row" bindtap="openGoogleMaps">
           <view class="info-icon">📍</view>
           <view class="info-content">
-            <text class="info-text">{{shopData.address}}</text>
+            <view class="address-container">
+              <text class="info-text">{{shopData.address}}</text>
+              <view class="copy-address" catchtap="copyAddress" data-address="{{shopData.address}}">复制</view>
+            </view>
             <view class="map-link">
               <text class="map-icon">🗺️</text>
               <text class="map-hint">点击查看谷歌地图</text>
