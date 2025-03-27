@@ -791,6 +791,20 @@ Page({
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/jzb.png',
         letter: 'J'
       },
+      {
+        id: 60,
+        name: '小米粒',
+        imageID: 'xml.png', 
+        image: 'https://i.ibb.co/5XxwDyMY/xml.png',
+        favorite: false,
+        address: 'Luisenstraße 55, 80333 München',
+        cuisine: '简餐熟食',
+        price: '10-20€',
+        hours: '周一至周日 11:30-22:30',
+        phone: '无',
+        cloudImageId: 'xml.png',
+        letter: 'X'
+      },
     ],
     filteredRestaurants: [],
     currentFilter: '全部',
@@ -1168,7 +1182,7 @@ Page({
       'yanyu': "https://i.ibb.co/4gWccmLR/yanyu.png", // 宴遇中餐馆
       'xysg': "https://i.ibb.co/VcmYydfX/xysg.png",  // 小魚砂鍋
       'xxx': "https://i.ibb.co/HDSqT293/xxx.png",    // 湘香轩
-      'xml': "https://i.ibb.co/5XxwDyMY/xml.png",    // 小马龙（可能是其他餐厅）
+      'xml': "https://i.ibb.co/5XxwDyMY/xml.png",    // 小米粒
       'xj': "https://i.ibb.co/S4dLfjwv/xj.png",      // 湘聚/湘菜
       'unclechen': "https://i.ibb.co/TDGr8ybq/unclechen.png", // Chen's
       'ts': "https://i.ibb.co/6cNX7fTT/ts.png",      // 天山维吾尔餐馆
@@ -1273,7 +1287,8 @@ Page({
       56: imageUrls.jx,       // 匠心
       57: imageUrls.cl,       // 川流
       58: imageUrls.mk,       // 面客
-      59: imageUrls.jzb       // 饺子吧
+      59: imageUrls.jzb,      // 饺子吧
+      60: imageUrls.xml       // 小米粒
     };
     
     // 创建字母到图片URL的映射（用于letter属性）

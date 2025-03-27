@@ -683,9 +683,22 @@ Page({
         price: 15,
         rating: 4.5,
         hours: '周一至周日 11:30-22:30',
-        tags: ['面馆', '简餐', '经济实惠'],
-        description: '饺子吧专注于提供各种风味的饺子面条，每一碗面都充满了独特的风味，是面食爱好者的天堂。',
+        tags: ['饺子', '面食', '简餐'],
+        description: '饺子吧提供各式手工水饺，馅料丰富多样，皮薄馅大，口感鲜美。除饺子外，还有各式面食和小吃。',
         cuisine: '面馆简餐'
+      },
+      '60': {
+        phone: '无',
+        price: 15,
+        rating: 4.6,
+        hours: '周一至周日 11:30-22:30',
+        tags: ['简餐', '熟食', '便捷'],
+        description: '小米粒是一家专注于提供正宗中式快餐的小店，主打各式盖浇饭、炒面和熟食。口味地道，价格实惠，适合学生和上班族快速就餐。店内环境整洁，服务热情，是慕尼黑地区中餐快餐的优质选择。',
+        cuisine: '简餐熟食',
+        transport: {
+          subway: 'U2线到Theresienstraße站',
+          bus: '100路到Luisenstraße站'
+        }
       },
     };
 
@@ -824,7 +837,7 @@ Page({
       'yanyu': "https://i.ibb.co/4gWccmLR/yanyu.png", // 宴遇中餐馆
       'xysg': "https://i.ibb.co/VcmYydfX/xysg.png",  // 小魚砂鍋
       'xxx': "https://i.ibb.co/HDSqT293/xxx.png",    // 湘香轩
-      'xml': "https://i.ibb.co/5XxwDyMY/xml.png",    // 小马龙
+      'xml': "https://i.ibb.co/5XxwDyMY/xml.png",    // 小米粒
       'xj': "https://i.ibb.co/S4dLfjwv/xj.png",      // 湘聚/湘菜
       'unclechen': "https://i.ibb.co/TDGr8ybq/unclechen.png", // Chen's
       'ts': "https://i.ibb.co/6cNX7fTT/ts.png",      // 天山维吾尔餐馆
@@ -888,7 +901,8 @@ Page({
       15: imageUrls.sxc,      // Song's Kitchen
       16: imageUrls.m3l,      // 面三郎
       17: imageUrls.ydw,      // 一大碗
-      18: imageUrls.hai       // Hai Seafood Izakaya
+      18: imageUrls.hai,      // Hai Seafood Izakaya
+      60: imageUrls.xml       // 小米粒
     };
     
     // 先设置默认图片
@@ -923,6 +937,9 @@ Page({
         imageSet = true;
       } else if (shopData.name && shopData.name.includes('小梅')) {
         shopData.imageUrl = imageUrls.xm;
+        imageSet = true;
+      } else if (shopData.name && shopData.name.includes('小米粒')) {
+        shopData.imageUrl = imageUrls.xml;
         imageSet = true;
       } else if (shopData.name && shopData.name.includes('马克思')) {
         shopData.imageUrl = imageUrls.max;
