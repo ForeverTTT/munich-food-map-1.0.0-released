@@ -1143,78 +1143,188 @@ Page({
   },
   // 加载餐厅图片
   loadRestaurantImages: function() {
-    // 先获取所有云存储图片的临时URL，再设置图片
-    const cloudIds = [];
-    this.data.restaurants.forEach(restaurant => {
-      if (restaurant.imageID && restaurant.imageID.indexOf('cloud://') === 0) {
-        cloudIds.push(restaurant.imageID);
-      }
-      if (restaurant.cloudImageId && restaurant.cloudImageId.indexOf('cloud://') === 0) {
-        cloudIds.push(restaurant.cloudImageId);
-      }
-    });
+    // 使用提供的外部URL替代云存储图片
+    const imageUrls = {
+      // 原有URL
+      'bzb': "https://i.ibb.co/4hh6mc3/bzb.png",     // 北自拍
+      'bang': "https://i.ibb.co/6RNXmkhy/bang.png",  // 帮锅
+      'xm': "https://i.ibb.co/dwPxbX3F/xm.png",      // 小马
+      'slfw': "https://i.ibb.co/0jKW38Gr/slfw.png",  // 私藏料理
+      'mk': "https://i.ibb.co/QjCG2x4n/mk.png",      // 马克思牛肉面
+      'lj': "https://i.ibb.co/XfFftpS3/lj.png",      // 菱角湖高级料理
+      'jzb': "https://i.ibb.co/hFsF5V4W/jzb.png",    // 匠之本铁板烧
+      'jx': "https://i.ibb.co/7thj4232/jx.png",      // 江西菜馆
+      'cl': "https://i.ibb.co/d4nkR9vq/cl.png",      // 草榴
+      
+      // 新增URL
+      'yml': "https://i.ibb.co/ymgt7g3j/yml.png",    // 悦满楼
+      'ygf': "https://i.ibb.co/7JmmgtmZ/ygf.png",    // 杨国福麻辣烫
+      'xiangj': "https://i.ibb.co/zVDjdWTj/xiangj.png", // 湘聚
+      'wai': "https://i.ibb.co/SDpZwW8k/wai.png",    // Wais Küche
+      'sen': "https://i.ibb.co/x8tYbnrh/sen.png",    // SEEN RESTAURANT
+      'zl': "https://i.ibb.co/9mnqWtNn/zl.png",      // 张亮麻辣烫
+      'yyz': "https://i.ibb.co/pjvMvrTS/yyz.png",    // 悠游之
+      'ydw': "https://i.ibb.co/ch9b1BzT/ydw.png",    // 一大碗
+      'yanyu': "https://i.ibb.co/4gWccmLR/yanyu.png", // 宴遇中餐馆
+      'xysg': "https://i.ibb.co/VcmYydfX/xysg.png",  // 小魚砂鍋
+      'xxx': "https://i.ibb.co/HDSqT293/xxx.png",    // 湘香轩
+      'xml': "https://i.ibb.co/5XxwDyMY/xml.png",    // 小马龙（可能是其他餐厅）
+      'xj': "https://i.ibb.co/S4dLfjwv/xj.png",      // 湘聚/湘菜
+      'unclechen': "https://i.ibb.co/TDGr8ybq/unclechen.png", // Chen's
+      'ts': "https://i.ibb.co/6cNX7fTT/ts.png",      // 天山维吾尔餐馆
+      'trj': "https://i.ibb.co/xKxZ45JP/trj.png",    // 唐人街
+      'tklmg': "https://i.ibb.co/Q0Tz85c/tklmg.png", // TAKLAMAKAN
+      'sxc2': "https://i.ibb.co/Q7dHsb9W/sxc2.png",  // 送小厨
+      'sxc': "https://i.ibb.co/pvbZ1vvV/sxc.png",    // Song's Kitchen
+      'qy': "https://i.ibb.co/tMFw201h/qy.png",      // 柒叶
+      'qjbm': "https://i.ibb.co/93m37sZd/qjbm.png",  // 千椒百冒
+      'qc': "https://i.ibb.co/39Hj7QSV/qc.png",      // Qin Cheng
+      'nhhh': "https://i.ibb.co/GvzZS7YT/nhhh.png",  // 你好成都/你好和合
+      'mmb2': "https://i.ibb.co/gLxXgrj3/mmb2.png",  // Mamma Bao
+      'mmb1': "https://i.ibb.co/fGxzXx96/mmb1.png",  // Mamma Bao - Adalbertstraße
+      'mm': "https://i.ibb.co/KpmwJjCB/mm.png",      // 其他餐厅
+      'mlzy': "https://i.ibb.co/nSvwRmc/mlzy.png",   // 麻辣煮義
+      'mian': "https://i.ibb.co/HfTZz05y/mian.png",  // Mian Noodles
+      'max': "https://i.ibb.co/29SJ0Fy/max.png",     // 马克思牛肉拉面
+      'm4l': "https://i.ibb.co/YTVjvcBw/m4l.png",    // 面四郎
+      'm3l': "https://i.ibb.co/0p2h6XLR/m3l.png",    // 面三郎
+      'm2l': "https://i.ibb.co/bRGFgvXF/m2l.png",    // 面次郎
+      'm1l': "https://i.ibb.co/tMfLxFYQ/m1l.png",    // 面太郎
+      'lxg': "https://i.ibb.co/RTwYt8F7/lxg.png",    // 老香港
+      'luis': "https://i.ibb.co/kgZWyqG4/luis.png",  // Lui's Cake
+      'ldhg': "https://i.ibb.co/jCKHphC/ldhg.png",   // 零点火锅
+      'ld2': "https://i.ibb.co/Ps3VBr88/ld2.png",    // LeDu - Happy Dumplings
+      'ld': "https://i.ibb.co/dS9NmnP/ld.png",       // LeDu Happy Dumplings
+      'lc': "https://i.ibb.co/8gP46k51/lc.png",      // 乐茶
+      'ks': "https://i.ibb.co/cKgPVTRx/ks.png",      // Kashgar
+      'kim': "https://i.ibb.co/KTrKjCM/kim.png",     // 老金韩国料理
+      'hai': "https://i.ibb.co/DgrwdjR1/hai.png",    // Hai Seafood Izakaya
+      'gshg': "https://i.ibb.co/MkZFMS1m/gshg.png",  // 古蜀火锅
+      'gll': "https://i.ibb.co/xqr1tvHc/gll.png",    // 麻辣烫 Gululu
+      'fy': "https://i.ibb.co/wF8cXZZY/fy.png",      // 福源酒家
+      'fan': "https://i.ibb.co/35PS2qH7/fan.png",    // FAN范
+      'ds': "https://i.ibb.co/4RghLqRZ/ds.png",      // 鼎尚中餐
+      'cy': "https://i.ibb.co/pvYvvngv/cy.png",      // 茶艺
+      'cww': "https://i.ibb.co/tPZN1MM2/cww.png",    // 川味王小面馆
+      'cl2': "https://i.ibb.co/d0T6vksw/cl.png",     // 川流
+      'chois': "https://i.ibb.co/4vSd4h1/chois.png", // Chois中国的味道火锅店
+      'chiachia': "https://i.ibb.co/bjVBWjfL/chiachia.png", // ChiaChia's Cafe
+      'chagiya': "https://i.ibb.co/8DK09G6D/chagiya.png",   // Chagiya
+      'chen': "https://i.ibb.co/7tmycGZx/chen.png"    // Chen's Nudelbar
+    };
     
-    // 如果没有云存储ID，直接应用过滤器
-    if (cloudIds.length === 0) {
-      this.applyFilters();
-      return;
-    }
+    // 创建ID到图片URL的映射
+    const idToImage = {
+      1: imageUrls.gll,       // 麻辣烫 Gululu
+      2: imageUrls.zl,        // 张亮麻辣烫
+      3: imageUrls.nhhh,      // 你好 成都
+      4: imageUrls.trj,       // 唐人街
+      5: imageUrls.chagiya,   // Chagiya Asia Tischgrill
+      6: imageUrls.yanyu,     // 宴遇中餐馆
+      7: imageUrls.gshg,      // 古蜀火锅
+      8: imageUrls.ldhg,      // 零点火锅
+      9: imageUrls.mian,      // Mian Noodles
+      10: imageUrls.mlzy,     // 麻辣煮義
+      11: imageUrls.chois,    // Chois中国的味道火锅店
+      12: imageUrls.ts,       // 天山维吾尔餐馆
+      13: imageUrls.max,      // 马克思牛肉拉面
+      14: imageUrls.xiangj,   // 湘聚
+      15: imageUrls.sxc,      // Song's Kitchen
+      16: imageUrls.m3l,      // 面三郎
+      17: imageUrls.ydw,      // 一大碗
+      18: imageUrls.hai,      // Hai Seafood Izakaya
+      19: imageUrls.tklmg,    // TAKLAMAKAN
+      20: imageUrls.qjbm,     // Jiao Kitchen 千椒百冒
+      21: imageUrls.chiachia, // ChiaChia's Cafe
+      22: imageUrls.chen,     // Chen's Nudelbar
+      23: imageUrls.qc,       // Qin Cheng
+      24: imageUrls.ld,       // LeDu Happy Dumplings
+      25: imageUrls.cww,      // 川味王小面馆
+      26: imageUrls.xxx,      // 湘香轩
+      27: imageUrls.luis,     // Lui's Cake
+      28: imageUrls.m2l,      // 面次郎
+      29: imageUrls.ks,       // Kashgar Uyghur Restaurant
+      30: imageUrls.wai,      // Wais Küche
+      31: imageUrls.ld2,      // LeDu - Happy Dumplings
+      32: imageUrls.kim,      // 老金韩国料理
+      33: imageUrls.xysg,     // 小魚砂鍋
+      34: imageUrls.qy,       // 柒叶 Kencho Matcha
+      35: imageUrls.bang,     // BANG
+      36: imageUrls.bzb,      // Baoz! Bar
+      37: imageUrls.mmb1,     // Mamma Bao - Adalbertstraße
+      38: imageUrls.ygf,      // 杨国福麻辣烫
+      39: imageUrls.sen,      // SEEN RESTAURANT
+      40: imageUrls.fy,       // 福源酒家
+      41: imageUrls.mmb2,     // Mamma Bao
+      42: imageUrls.ds,       // 鼎尚中餐
+      43: imageUrls.m1l,      // 面太郎
+      44: imageUrls.fan,      // FAN范
+      45: imageUrls.sxc2,     // 送小厨
+      46: imageUrls.yyz,      // 悠游之
+      47: imageUrls.nhhh,     // 你好和合
+      48: imageUrls.lxg,      // 老香港
+      49: imageUrls.lc,       // 乐茶
+      50: imageUrls.m4l,      // 面四郎
+      51: imageUrls.cy,       // 茶艺
+      52: imageUrls.slfw,     // 丝路风味
+      53: imageUrls.yml,      // 悦满楼
+      54: imageUrls.lj,       // 老金中餐馆
+      55: imageUrls.xm,       // 小梅中餐馆
+      56: imageUrls.jx,       // 匠心
+      57: imageUrls.cl,       // 川流
+      58: imageUrls.mk,       // 面客
+      59: imageUrls.jzb       // 饺子吧
+    };
     
-    // 将云存储ID分批处理，每批最多50个
-    const batchSize = 50;
-    const batches = [];
+    // 创建字母到图片URL的映射（用于letter属性）
+    const letterToImage = {
+      'A': imageUrls.m2l,     // 默认A
+      'B': imageUrls.bzb,     // 北，Baoz! Bar
+      'C': imageUrls.chois,   // 川，Chois
+      'D': imageUrls.ds,      // 鼎尚中餐
+      'F': imageUrls.fan,     // FAN范
+      'G': imageUrls.gll,     // 麻辣烫 Gululu
+      'H': imageUrls.hai,     // Hai Seafood
+      'J': imageUrls.jzb,     // 饺子吧
+      'K': imageUrls.ks,      // Kashgar
+      'L': imageUrls.lj,      // 老金中餐馆
+      'M': imageUrls.mk,      // 面客
+      'N': imageUrls.nhhh,    // 你好成都
+      'Q': imageUrls.qy,      // 柒叶
+      'S': imageUrls.sxc,     // Song's Kitchen
+      'T': imageUrls.ts,      // 天山
+      'W': imageUrls.wai,     // Wais Küche
+      'X': imageUrls.xm,      // 小梅
+      'Y': imageUrls.yanyu,   // 宴遇
+      'Z': imageUrls.zl       // 张亮
+    };
     
-    for (let i = 0; i < cloudIds.length; i += batchSize) {
-      batches.push(cloudIds.slice(i, i + batchSize));
-    }
-    
-    // 处理每一批
-    let completedBatches = 0;
-    const urlMap = {};
-    
-    batches.forEach((batchIds, index) => {
-      wx.cloud.getTempFileURL({
-        fileList: batchIds,
-        success: res => {
-          if (res.fileList && res.fileList.length > 0) {
-            res.fileList.forEach(file => {
-              if (file.fileID && file.tempFileURL) {
-                urlMap[file.fileID] = file.tempFileURL;
-              }
-            });
-          }
-        },
-        fail: err => {
-          console.error(`获取第${index+1}批临时URL失败:`, err);
-        },
-        complete: () => {
-          completedBatches++;
-          
-          // 当所有批次处理完成时，更新餐厅图片
-          if (completedBatches === batches.length) {
-            this.updateRestaurantImages(urlMap);
-          }
-        }
-      });
-    });
-  },
-  
-  // 更新餐厅图片URL
-  updateRestaurantImages: function(urlMap) {
-    // 更新餐厅图片URL
+    // 更新餐厅图片
     const updatedRestaurants = this.data.restaurants.map(restaurant => {
-      // 优先使用imageID的临时URL
-      if (restaurant.imageID && urlMap[restaurant.imageID]) {
-        restaurant.image = urlMap[restaurant.imageID];
-      } 
-      // 其次使用cloudImageId的临时URL
-      else if (restaurant.cloudImageId && urlMap[restaurant.cloudImageId]) {
-        restaurant.image = urlMap[restaurant.cloudImageId];
+      // 首先尝试通过ID直接匹配
+      if (idToImage[restaurant.id]) {
+        restaurant.image = idToImage[restaurant.id];
+        return restaurant;
       }
-      // 如果都没有，使用默认图片
-      else {
-        restaurant.image = '/images/logo.png';
+      
+      // 如果没有ID匹配，根据letter属性匹配
+      if (restaurant.letter && letterToImage[restaurant.letter]) {
+        restaurant.image = letterToImage[restaurant.letter];
+        return restaurant;
       }
+      
+      // 如果都没有匹配，尝试从URL的文件名判断
+      const imageID = restaurant.imageID || '';
+      const filename = imageID.split('/').pop() || '';
+      const filenameWithoutExt = filename.split('.')[0] || '';
+      
+      if (imageUrls[filenameWithoutExt]) {
+        restaurant.image = imageUrls[filenameWithoutExt];
+        return restaurant;
+      }
+      
+      // 默认图片
+      restaurant.image = '/images/logo.png';
       return restaurant;
     });
     
@@ -1226,7 +1336,7 @@ Page({
       this.applyFilters();
     });
   },
-
+  
   // 处理图片加载失败
   onImageError: function(e) {
     const id = e.currentTarget.dataset.id;
@@ -1248,33 +1358,15 @@ Page({
     }
   },
   loadBgImage: function() {
-    wx.cloud.getTempFileURL({
-      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/bgimage.png'],
-      success: res => {
-        if (res.fileList && res.fileList.length > 0) {
-          this.setData({
-            bgImageUrl: res.fileList[0].tempFileURL
-          });
-        }
-      },
-      fail: err => {
-        console.error('获取背景图片失败', err);
-      }
+    // 使用外部URL替代本地图片
+    this.setData({
+      bgImageUrl: 'https://i.ibb.co/Nd8MFZw7/bgimage.png'
     });
   },
   loadEmptyImage: function() {
-    wx.cloud.getTempFileURL({
-      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/empty.png'],
-      success: res => {
-        if (res.fileList && res.fileList.length > 0) {
-          this.setData({
-            emptyImageUrl: res.fileList[0].tempFileURL
-          });
-        }
-      },
-      fail: err => {
-        console.error('获取空结果图片失败', err);
-      }
+    // 直接设置本地图片
+    this.setData({
+      emptyImageUrl: '/images/empty.png'
     });
   },
   // 加载收藏状态

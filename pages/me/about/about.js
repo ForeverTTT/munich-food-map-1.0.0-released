@@ -25,32 +25,9 @@ Page({
 
   // 从云存储加载背景图
   loadBgImage: function() {
-    wx.cloud.getTempFileURL({
-      fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/munich.png'],
-      success: res => {
-        if (res.fileList && res.fileList.length > 0) {
-          this.setData({
-            bgImageUrl: res.fileList[0].tempFileURL
-          });
-        }
-      },
-      fail: err => {
-        console.error('获取背景图片失败', err);
-        // 失败时尝试使用另一个可能的文件ID
-        wx.cloud.getTempFileURL({
-          fileList: ['cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42/images/munich.png'],
-          success: res => {
-            if (res.fileList && res.fileList.length > 0) {
-              this.setData({
-                bgImageUrl: res.fileList[0].tempFileURL
-              });
-            }
-          },
-          fail: error => {
-            console.error('获取背景图片第二次尝试也失败', error);
-          }
-        });
-      }
+    // 直接使用外部URL
+    this.setData({
+      bgImageUrl: 'https://i.ibb.co/CK88nNPD/munich.png'
     });
   },
 
