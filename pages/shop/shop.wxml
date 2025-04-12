@@ -60,7 +60,12 @@
         
         <view class="info-row" bindtap="callShop">
           <view class="info-icon">📞</view>
-          <text class="info-text">{{shopData.phone}}</text>
+          <view class="info-content">
+            <view class="address-container">
+              <text class="info-text">{{shopData.phone}}</text>
+              <view class="copy-address" catchtap="copyPhone" data-phone="{{shopData.phone}}">复制</view>
+            </view>
+          </view>
         </view>
         
         <view class="info-row">

@@ -25,7 +25,7 @@ Page({
         address: 'Helene-Mayer-Ring 15, 80809 München',
         cuisine: '麻辣烫',
         price: '10-20€',
-        hours: '周一至周日11:30-21:30',
+        hours: '周三至周一 11:30-21:30,周二休息',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/gululu.jpg',
         letter: 'G'
       },
@@ -38,7 +38,7 @@ Page({
         address: 'Pasinger Bahnhofsplatz 1, UG neben Aldi Markt, 81241 München',
         cuisine: '麻辣烫',
         price: '10-20€',
-        hours: '周六至周日 9:30-20:00',
+        hours: '周一至周六 9:30-20:00，周日休息',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/zhangliang.jpg',
         letter: 'Z'
       },
@@ -64,7 +64,7 @@ Page({
         address: 'Pasinger Bahnhofspl. 3, 81241 München',
         cuisine: '中餐馆',
         price: '10-20€',
-        hours: '周一至周日 11:30-22:00',
+        hours: '周一至周日 11:00-22:00',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/tangrenjie.jpg',
         letter: 'T'
       },
@@ -77,7 +77,7 @@ Page({
         address: 'Camerloherstraße 67, 80689 München',
         cuisine: '烧烤店',
         price: '40-50€',
-        hours: '周一至周日 17:00-23:00',
+        hours: '周一至周五 17:30-23:00, 周六周日12:00-15:00, 17:30-23:00',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/chagiya.jpg',
         letter: 'C'
       },
@@ -90,7 +90,7 @@ Page({
         address: 'Albert-Roßhaupter-Straße 13, 81369 München',
         cuisine: '中餐馆',
         price: '10-20€',
-        hours: '周一至周日 11:30-22:30',
+        hours: '周一至周四 17:00-22:30, 周五至周日11:30-15:00, 17:00-22:30',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/yanyu.jpg',
         letter: 'Y'
       },
@@ -103,7 +103,7 @@ Page({
         address: 'Züricher Str. 35, 81476 München',
         cuisine: '火锅',
         price: '10-30€',
-        hours: '周一至周日 12:00-23:00',
+        hours: '周二至周日 11:30-15:00，17:30-23:00，周一休息',
         cloudImageId: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/restaurants/gshg.jpg',
         letter: 'G'
       },
@@ -805,6 +805,19 @@ Page({
         cloudImageId: 'xml.png',
         letter: 'X'
       },
+      {
+        id: 61,
+        name: '聚宝楼',
+        imageID: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/restaurants/jbl.png',
+        image: '',
+        favorite: false,
+        address: 'Münchener Freiheit 6, 80802 München',
+        cuisine: '川菜',
+        price: '25-35€',
+        hours: '周一至周日 11:30-22:30',
+        cloudImageId: 'https://i.ibb.co/9HvskM8W/jbl.png',
+        letter: 'J'
+      },
     ],
     filteredRestaurants: [],
     currentFilter: '全部',
@@ -916,7 +929,7 @@ Page({
       '方': 'F', '肥': 'F', '福': 'F', '范': 'F',
       '高': 'G', '古': 'G', '广': 'G', '国': 'G',
       '海': 'H', '好': 'H', '汉': 'H', '湖': 'H', '悠': 'Y',
-      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J', '匠': 'J', '饺': 'J',
+      '家': 'J', '江': 'J', '津': 'J', '京': 'J', '鸡': 'J', '匠': 'J', '饺': 'J','聚': 'J',
       '开': 'K', '康': 'K', '烤': 'K',
       '老': 'L', '乐': 'L', '里': 'L', '辣': 'L', '零': 'L', '鹿': 'L',
       '麻': 'M', '美': 'M', '面': 'M', '马': 'M', '慢': 'M',
@@ -1171,6 +1184,7 @@ Page({
       'cl': "https://i.ibb.co/d4nkR9vq/cl.png",      // 草榴
       
       // 新增URL
+      'jbl': "https://i.ibb.co/9HvskM8W/jbl.png",    // 聚宝楼
       'yml': "https://i.ibb.co/ymgt7g3j/yml.png",    // 悦满楼
       'ygf': "https://i.ibb.co/7JmmgtmZ/ygf.png",    // 杨国福麻辣烫
       'xiangj': "https://i.ibb.co/zVDjdWTj/xiangj.png", // 湘聚
@@ -1288,7 +1302,8 @@ Page({
       57: imageUrls.cl,       // 川流
       58: imageUrls.mk,       // 面客
       59: imageUrls.jzb,      // 饺子吧
-      60: imageUrls.xml       // 小米粒
+      60: imageUrls.xml,      // 小米粒
+      61: imageUrls.jbl       // 聚宝楼
     };
     
     // 创建字母到图片URL的映射（用于letter属性）

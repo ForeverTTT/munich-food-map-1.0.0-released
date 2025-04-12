@@ -1,4 +1,729 @@
 // pages/shop/shop.js
+// 在文件顶部添加
+const restaurantDetails = {
+  '1': {
+    phone: '无',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 11:30-21:30',
+    tags: ['麻辣烫', '中式料理', '经济实惠'],
+    description: 'Gululu Mini Hot Pot 提供正宗的麻辣烫和奶茶以及中式小吃盒饭。适合快速就餐。',
+    cuisine: '麻辣烫',
+    transport: {
+      subway: 'U3,U8线到Olympiazentrum站',
+      bus: '173/180路到奥林匹克公园站'
+    }
+  },
+  '2': {
+    phone: '+49 89 37454752',
+    price: 15,
+    rating: 4.9,
+    hours: '周一至周六 9:30-20:00，周日休息',
+    tags: ['麻辣烫', '中式料理', '连锁店'],
+    description: '张亮麻辣烫是中国知名连锁麻辣烫品牌，提供各种蔬菜、肉类、豆制品等食材，顾客可自由选择，汤底麻辣鲜香。',
+    cuisine: '麻辣烫',
+    transport: {
+      subway: 'S2,3,4,5,6,8线到Pasing站'
+    }
+  },
+  '3': {
+    phone: '+49 89 12262573',
+    price: 20,
+    rating: 4.3,
+    hours: '周一至周日 11:30-21:00',
+    tags: ['川菜', '麻辣', '中餐'],
+    description: '你好成都餐厅提供四川风味，麻辣鲜香，菜品多样，包括经典川菜及特色小吃。',
+    cuisine: '川菜',
+    transport: {
+      subway: 'S2,3,4,5,6,8线到Pasing站'
+    }
+  },
+  '4': {
+    phone: '+49 160 95881606',
+    price: 20,
+    rating: 3.9,
+    hours: '周一至周日 11:00-22:00',
+    tags: ['中餐', '家庭聚餐', '经济实惠'],
+    description: '唐人街餐厅提供多种中式美食，多个地方风味，适合家庭聚餐和朋友聚会。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'S2,3,4,5,6,8线到Pasing站'
+    }
+  },
+  '5': {
+    phone: '+49 89 99887868',
+    price: 45,
+    rating: 4.5,
+    hours: '周一至周五 17:30-23:00, 周六周日12:00-15:00, 17:30-23:00',
+    tags: ['烧烤', '韩式', '聚餐'],
+    description: 'Chagiya提供正宗的亚洲风味烧烤，以韩式烧烤为主，顾客可以在餐桌上自己烹饪新鲜食材，体验独特的用餐乐趣。',
+    cuisine: '烧烤店',
+    transport: {
+      subway: 'U5线到Laimer Platz站'
+    }
+  },
+  '6': {
+    phone: '+49 89 122521588',
+    price: 25,
+    rating: 4.5,
+    hours: '周一至周四 17:00-22:30, 周五至周日11:30-15:00, 17:00-22:30',
+    tags: ['中餐馆', '家常菜', '聚餐'],
+    description: '宴遇中餐馆提供地道的中国家常菜，口味正宗，环境舒适，是朋友聚餐的理想场所。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U6线到Harras站'
+    }
+  },
+  '7': {
+    phone: '+49 89 81889098',
+    price: 45,
+    rating: 4.6,
+    hours: '周二至周日 11:30-15:00，17:30-23:00，周一休息',
+    tags: ['火锅', '川菜', '聚餐'],
+    description: '古蜀火锅提供正宗的四川火锅体验，汤底麻辣，食材丰富，适合亲友聚餐。',
+    cuisine: '火锅',
+    transport: {
+      subway: 'U3线到Forstenrieder Allee站'
+    }
+  },
+  '8': {
+    phone: '+49 89 78549420',
+    price: 35,
+    rating: 4.7,
+    hours: '周二，周四 17:30-23:00,其余11:30-15:00,17:30-23:00',
+    tags: ['火锅', '聚餐'],
+    description: '零点火锅提供多种口味的汤底，满足不同食客的需求,适合亲友聚餐。',
+    cuisine: '火锅',
+    transport: {
+      subway: 'U3线到Obersendling站'
+    }
+  },
+  '9': {
+    phone: '+49 15 219654245',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周日 12:00-22:00',
+    tags: ['面馆', '中式简餐', '经济实惠'],
+    description: 'Mian Noodles专注于提供各种风味的中式面条，从兰州拉面到担担面，每一碗都充满味道。',
+    cuisine: '面馆'
+  },
+  '10': {
+    phone: '+49 89 56789012',
+    price: 20,
+    rating: 4.7,
+    hours: '周一到周日 11:30–15:00，17:30–22:00',
+    tags: ['干锅', '麻辣烫', '川菜'],
+    description: '麻辣煮義融合了四川麻辣烫和干锅的精髓，提供独特的川式烹饪体验，麻辣鲜香，回味无穷。',
+    cuisine: '干锅麻辣烫',
+    transport: {
+      subway: 'U3线到Poccistrasse站'
+    }
+  },
+  '11': {
+    phone: '+49 89 39290131',
+    price: 45,
+    rating: 4.5,
+    hours: '周一至周五 17:30-23:00,周六至周日 12:00-15:00, 17:30-23:00',
+    tags: ['火锅', '高档餐厅', '商务宴请'],
+    description: 'Chois中国的味道火锅店将传统火锅与现代餐饮完美结合，提供高品质的食材和精致的用餐环境。',
+    cuisine: '火锅',
+    transport: {
+      subway: 'U3线到Poccistrasse站'
+    }
+  },
+  '12': {
+    phone: '+49 89 55271643',
+    price: 20,
+    rating: 4.2,
+    hours: '周一至周日 11:00-22:00',
+    tags: ['新疆菜', '民族特色', '烤肉'],
+    description: '天山维吾尔餐馆提供正宗的新疆美食，包括手抓饭、烤羊肉串和各种特色面食，让您感受丝绸之路的美食文化。',
+    cuisine: '新疆菜',
+    transport: {
+      subway: 'U3，U6线到PGoetheplatz站'
+    }
+  },
+  '13': {
+    phone: '+49 89 51556868',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 11:30-15:30, 17:00-22:00',
+    tags: ['拉面', '牛肉面', '中式简餐'],
+    description: '马克思牛肉拉面以其独特的牛肉汤底和手工拉制的面条闻名，每一碗都散发着浓郁的牛肉香气。',
+    cuisine: '拉面',
+    transport: {
+      subway: 'U1，U2，U3，U6线到Sendlinger Tor站'
+    }
+  },
+  '14': {
+    phone: '+49 89 23032399',
+    price: 25,
+    rating: 4.1,
+    hours: '周一到周二 17:30-22:30 周三至周日 11:30–15:00 17:30–22:30',
+    tags: ['湘菜', '辣味', '特色菜'],
+    description: '湘聚餐厅提供地道的湖南美食，以麻辣鲜香的口味著称，特色菜品包括湘味小炒肉等。',
+    cuisine: '湘菜',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '15': {
+    phone: '+49 89 55155395',
+    price: 15,
+    rating: 4.3,
+    hours: '周一至周日 11:00-21:00',
+    tags: ['台湾菜', '家常菜', '简餐'],
+    description: 'Song\'s Kitchen提供道地的台湾家常菜，从卤肉饭到珍珠奶茶，带给您浓浓的台湾风味。',
+    cuisine: '台湾菜',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '16': {
+    phone: '+49 1590 1700133',
+    price: 15,
+    rating: 4.7,
+    hours: '周一周三周四周五 11:00–15:00 17:30–22:00 周六周日 11:30-22:00 周二休息',
+    tags: ['面馆', '简餐', '经济实惠'],
+    description: '面三郎专注于提供各种风味的亚洲面条，从日式拉面到中式炸酱面，种类丰富，口味正宗。',
+    cuisine: '面馆简餐',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '17': {
+    phone: '+49 89 927419666',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 11:30-22:00',
+    tags: ['面馆', '简餐', '经济实惠'],
+    description: '一大碗以其分量十足的面食赢得了众多食客的喜爱，提供多种中式面条和配料选择，满足不同口味的需求。',
+    cuisine: '面馆简餐',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '18': {
+    phone: '+49 89 32787345',
+    price: 35,
+    rating: 4.5,
+    hours: '周一至周日 11:30–15:00，17:30–23:00',
+    tags: ['海鲜', '中式料理', '高档餐厅'],
+    description: 'Hai Seafood Izakaya提供新鲜的海鲜料理，融合中式和日式烹饪技法，为食客带来独特的美食体验。',
+    cuisine: '中式海鲜',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '61': {
+    phone: '+49 89 80959293',
+    price: 30,
+    rating: 4.6,
+    hours: '周一至周日 11:30–14:30，17:30–22:00',
+    tags: ['川菜', '麻辣', '特色菜'],
+    description: '聚宝楼提供正宗的川菜美食，特色菜品包括水煮鱼、麻婆豆腐、回锅肉等经典川菜，是品尝地道川味的理想选择。',
+    cuisine: '川菜',
+    transport: {
+      subway: 'Sbahn到慕尼黑东站',
+      bus: 'Grillparzerstraße站'
+    }
+  },
+  '20': {
+    phone: '+49 89 92334100',
+    price: 25,
+    rating: 4.7,
+    hours: '周一至周五 11:30–21:30 周六周日 11:30–22:00',
+    tags: ['冒菜', '川菜', '麻辣'],
+    description: '千椒百冒以其独特的冒菜制作工艺闻名，麻辣鲜香的汤底和丰富的配料选择，带来地道的四川味道。',
+    cuisine: '冒菜川菜',
+    transport: {
+      subway: 'U4到Arabellapark站'
+    }
+  },
+  
+  '21': {
+    phone: '+49 89 18941197',
+    price: 15,
+    rating: 4.7,
+    hours: '周二至周日 11:30–17:30，周一休息',
+    tags: ['台湾菜', '下午茶', '甜点'],
+    description: 'ChiaChia\'s Cafe提供正宗的台湾小吃和甜点，从珍珠奶茶到台式蛋糕，带给您家乡的味道。精致的环境和优质的服务让人流连忘返。',
+    cuisine: '台湾菜下午茶',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '22': {
+    phone: '+49 89 23467812',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周六 11:00–19:00，周日休息',
+    tags: ['面馆', '简餐', '经济实惠'],
+    description: 'Chen\'s Nudelbar是慕尼黑市中心的一家知名亚洲面馆，提供多种风味的亚洲拉面，种类丰富，价格实惠。',
+    cuisine: '面馆简餐',
+    transport: {
+      subway: 'Ubahn或Sbahn到Marienplatz站',
+    }
+  },
+  '23': {
+    phone: '无',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周六，12:00–15:00，17:00–21:30',
+    tags: ['面馆', '经济实惠', '中式简餐'],
+    description: 'Qin Cheng餐厅以其正宗的中式面条和实惠的价格而闻名，每一碗面都散发着浓郁的家乡风味，让您回味无穷。',
+    cuisine: '面馆',
+    transport: {
+      subway: 'Sbahn到Karlsplatz站',
+    }
+  },
+  '24': {
+    phone: '无',
+    price: 15,
+    rating: 4.5,
+    hours: '周六 10:30-20:00',
+    tags: ['饺子', '点心', '经济实惠'],
+    description: 'LeDu Happy Dumplings专注于提供各种风味的手工饺子与煎饼，让您体验地道的中国味道。',
+    cuisine: '饺子馆',
+    transport: {
+      subway: 'Sbahn到Karlsplatz站',
+    }
+  },
+  '25': {
+    phone: '+49 17657982434',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周日 11:30-21:30',
+    tags: ['川菜', '面馆', '辣味'],
+    description: '川味王小面馆提供正宗的四川风味面食，从担担面到麻辣牛肉面，麻辣鲜香，让您体验地道的川式面食文化。',
+    cuisine: '川菜面馆',
+    transport: {
+      subway: 'Ubahn或Sbahn到Hauptbahnhof站',
+    }
+  },
+  '26': {
+    phone: '+49 89 67890234',
+    price: 25,
+    rating: 4.4,
+    hours: '周二至周日 11:30–14:30，17:30–22:30',
+    tags: ['湘菜', '辣味', '家常菜'],
+    description: '湘香轩提供正宗的湖南美食，以香辣可口的风味著称，招牌菜包括剁椒鱼头、湖南小炒肉等多种正宗湘菜。',
+    cuisine: '湘菜',
+    transport: {
+      subway: 'U4，U5到Schwantalerhöhe站',
+    }
+  },
+  '27': {
+    phone: '+49 89 51115193',
+    price: 10,
+    rating: 4.5,
+    hours: '周一到周日 12:00–18:00，周二休息',
+    tags: ['蛋糕', '甜点', '下午茶'],
+    description: 'Lui\'s Cake是慕尼黑一家备受欢迎的亚洲风味蛋糕店，提供多种手工制作的甜点和蛋糕，精致美味，是下午茶的理想选择。',
+    cuisine: '蛋糕店',
+    transport: {
+      subway: 'Sbahn到Donnersbergerbrücke站',
+    }
+  },
+  '28': {
+    phone: '+49 89 55284933',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周日 11:00-23:00',
+    tags: ['面馆', '经济实惠', '中式简餐'],
+    description: '面次郎以其独特的拉面工艺和丰富的配料选择而闻名，每一碗面都经过精心烹制，汤底浓郁，面条筋道，让您体验地道的亚洲面食文化。',
+    cuisine: '面馆',
+    transport: {
+      subway: 'Ubahn或Sbahn到Hauptbahnhof站',
+    }
+  },
+  '29': {
+    phone: '+49 1516 6196000',
+    price: 25,
+    rating: 4.4,
+    hours: '周一至周日 09:00–00:30',
+    tags: ['新疆菜', '烤肉', '民族特色'],
+    description: 'Kashgar Uyghur Restaurant提供正宗的新疆维吾尔美食，从手抓饭到烤羊肉串，每一道菜都充满了浓郁的西域风情，让您感受丝绸之路的美食文化。',
+    cuisine: '新疆菜',
+    transport: {
+      subway: 'Ubahn或Sbahn到Hauptbahnhof站',
+    }
+  },
+  '30': {
+    phone: '+49 89 32609618',
+    price: 15,
+    rating: 4.9,
+    hours: '周一至周日 11:30-20:00',
+    tags: ['简餐', '经济实惠', '家常菜'],
+    description: 'Wais Küche提供多种亚洲风味的简餐，从炒饭到盖浇饭，菜品丰富，价格实惠，是午餐和晚餐的理想选择。',
+    cuisine: '简餐'
+  },
+  '31': {
+    phone: '无',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周日 11:00-21:30',
+    tags: ['饺子', '点心', '经济实惠'],
+    description: 'LeDu - Happy Dumplings专注于提供各种风味的手工饺子，从传统猪肉白菜馅到创新口味，每一个饺子都包含着匠心，让您体验地道的中国味道。',
+    cuisine: '饺子馆',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '32': {
+    phone: '+49 89 37966880',
+    price: 15,
+    rating: 4.0,
+    hours: '周二至周日 11:30-14:00，18:00-22:00，周一休息',
+    tags: ['韩国料理', '烧烤', '经济实惠'],
+    description: '老金韩国料理提供正宗的朝鲜族美食，从烤肉到拌饭，每一道菜品都充满了风味。',
+    cuisine: '韩餐',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '33': {
+    phone: '+49 176 62092754',
+    price: 15,
+    rating: 4.7,
+    hours: '周二至周日 11:00-15:00,17:30-22:00，周一休息',
+    tags: ['砂锅', '简餐', '经济实惠'],
+    description: '小魚砂鍋以其特色的砂锅菜品而闻名，食材新鲜，汤底鲜美，是寒冷冬日里的一道暖心美食。',
+    cuisine: '砂锅简餐',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '34': {
+    phone: '+49 89 90939741',
+    price: 15,
+    rating: 4.2,
+    hours: '周二至周日 12:00-20:00，周一休息',
+    tags: ['抹茶', '蛋糕', '甜点'],
+    description: '柒叶 Kencho Matcha是一家专注于抹茶甜品的精品店，提供多种抹茶风味的蛋糕、甜点和饮品，让您体验纯正的抹茶文化。',
+    cuisine: '抹茶蛋糕',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '35': {
+    phone: '无',
+    price: 10,
+    rating: 4.7,
+    hours: '周一至周日 11:00-20:30',
+    tags: ['饭团', '简餐', '经济实惠'],
+    description: 'BANG以其创意十足的日式饭团而受到欢迎，使用优质米饭和丰富馅料，每一个饭团都是一个小巧的美食杰作。',
+    cuisine: '饭团',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '36': {
+    phone: '+49 176 29773698',
+    price: 15,
+    rating: 4.5,
+    hours: '周一至周五 11:00-15:00, 17:00-21:30, 周六至周日 11:00-21:30',
+    tags: ['包子', '点心', '简餐'],
+    description: 'Baoz! Bar以其手工制作的各式包子而闻名，从传统猪肉包到创新口味，每一个包子都是一份用心的作品，是忙碌生活中的美味选择。',
+    cuisine: '包子简餐',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '37': {
+    phone: '无',
+    price: 15,
+    rating: 4.3,
+    hours: '周一至周日 11:30-21:00',
+    tags: ['面馆', '简餐', '经济实惠'],
+    description: 'Mamma Bao - Adalbertstraße提供多种亚洲风味面食和包子，从拉面到刀削面，每一道菜品都充满了家的味道。',
+    cuisine: '面馆简餐',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '38': {
+    phone: '+49 89 67905917',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 11:30-15:30，16:30-21:30',
+    tags: ['麻辣烫', '串串香', '经济实惠'],
+    description: '杨国福麻辣烫是来自中国的知名连锁麻辣烫品牌，提供多种新鲜食材和特色汤底，让您自由搭配，体验麻辣鲜香的美食享受。',
+    cuisine: '麻辣烫',
+    transport: {
+      subway: 'U3,U6到Universität站',
+    }
+  },
+  '39': {
+    phone: '无',
+    price: 35,
+    rating: 4.5,
+    hours: '周一至周日 11:30-15:00,17:30-23:00',
+    tags: ['川菜', '特色菜', '中餐'],
+    description: 'SEEN RESTAURANT提供创新的现代川菜，将传统川菜与现代烹饪技巧相结合，带来全新的味觉体验，是品尝正宗川菜的理想场所。',
+    cuisine: '川菜',
+    transport: {
+      subway: 'U2线到Königplatz站',
+    }
+  },
+  '40': {
+    phone: '+49 89 59083665',
+    price: 25,
+    rating: 4.3,
+    hours: '周一至周日 11:30-15:00,17:30-23:00',
+    tags: ['中餐馆', '粤菜', '家庭聚餐'],
+    description: '福源酒家提供正宗的粤式美食，从烧腊到点心，菜品丰富多样，口味正宗，环境舒适，是家庭聚餐和朋友聚会的理想场所。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U2线到Königplatz站',
+    }
+  },
+  '41': {
+    phone: '无',
+    price: 15,
+    rating: 4.4,
+    hours: '周一至周日 12:00-16:00，18:00-22:00',
+    tags: ['包子', '面食', '简餐'],
+    description: 'Mamma Bao以其地道的包子和面食而闻名，每一个包子都散发着浓郁的香气，是早餐和午餐的理想选择。',
+    cuisine: '包子面馆',
+    transport: {
+      subway: 'U2线到Königplatz站',
+    }
+  },
+  '42': {
+    phone: '+49 89 51553888',
+    price: 25,
+    rating: 4.7,
+    hours: '周一至周日 11:30-15:00，17:30-22:30',
+    tags: ['中餐馆', '家常菜', '聚餐'],
+    description: '鼎尚中餐以其丰富的菜品选择和优质的服务而受到欢迎，从北方面食到南方炒菜，菜系丰富，满足不同口味的需求。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'Sbahn到Rosenheimer Platz站'
+    }
+  },
+  '43': {
+    phone: '+49 173 6758122',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 10:45-15:00，17:30-22:00',
+    tags: ['面馆', '拉面', '经济实惠'],
+    description: '面太郎专注于提供地道的亚洲面食，从日式拉面到中式刀削面，种类丰富，口味正宗，是面食爱好者的天堂。',
+    cuisine: '面馆',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '44': {
+    phone: '+49 89 80074767',
+    price: 30,
+    rating: 4.5,
+    hours: '周一至周日 11:30-15:00，17:30-23:00',
+    tags: ['中餐馆', '创意菜', '精致料理'],
+    description: 'FAN范餐厅以其创新的中式料理和现代化的用餐环境而闻名，将传统中餐与现代烹饪技法相结合，带来全新的味觉体验。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '45': {
+    phone: '+49 89 54767778',
+    price: 25,
+    rating: 4.5,
+    hours: '周一至周日 11:00-15:00，17:00-23:00',
+    tags: ['台湾菜', '家常菜', '特色小吃'],
+    description: '送小厨提供正宗的台湾家常菜和特色小吃，从卤肉饭到三杯鸡，每一道菜品都充满了台湾风味，让您仿佛置身宝岛台湾。',
+    cuisine: '台湾菜',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '46': {
+    phone: '+49 89 23799257',
+    price: 35,
+    rating: 4.7,
+    hours: '周一至周日 12:00-14:30，17:30-23:00',
+    tags: ['中餐馆', '高档餐厅', '商务宴请'],
+    description: '悠游之餐厅融合了中式烹饪和西式用餐体验，提供精致的中式料理和舒适的就餐环境，是商务聚餐和特殊场合的理想选择。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U2线到Hohenzollernplatz站',
+    }
+  },
+  '47': {
+    phone: '+49 89 3159316',
+    price: 25,
+    rating: 4.6,
+    hours: '周二至周日 11:30-14:30，17:30-22:00,周一休息',
+    tags: ['川菜', '特色菜', '辣味'],
+    description: '你好和合餐厅提供正宗的四川风味菜肴，以其麻辣鲜香的特色和丰富的菜品选择而受到欢迎，是品尝地道川菜的理想场所。',
+    cuisine: '川菜',
+    transport: {
+      subway: 'S1到Oberschleißheim站',
+    }
+  },
+  '48': {
+    phone: '+49 813197620',
+    price: 35,
+    rating: 4.6,
+    hours: '周二至周日 11:30-14:30，17:30-22:30,周一休息',
+    tags: ['粤菜', '海鲜', '点心'],
+    description: '老香港餐馆提供正宗的粤式美食，从烧腊到点心，从海鲜到家常菜，菜品种类丰富，口味地道，让您感受香港美食文化的魅力。',
+    cuisine: '粤菜',
+    transport: {
+      subway: 'S2到Karlsfeld站',
+    }
+  },
+  '49': {
+    phone: '+49 89 38989866',
+    price: 10,
+    rating: 4.4,
+    hours: '周二至周日 12:00-19:00，周一休息',
+    tags: ['奶茶', '蛋糕', '甜点'],
+    description: '乐茶是一家专注于提供优质奶茶和甜点的店铺，从珍珠奶茶到各种口味的蛋糕，满足您对甜品的所有想象。',
+    cuisine: '奶茶蛋糕',
+    transport: {
+      subway: 'U6到Münchner Freiheit站',
+    }
+  },
+  '50': {
+    phone: '+49 89 72469805',
+    price: 15,
+    rating: 4.6,
+    hours: '周一至周日 11:00-22:00',
+    tags: ['拉面', '面馆', '经济实惠'],
+    description: '面四郎专注于提供正宗的日式拉面和各种亚洲面食，汤底浓郁，面条筋道，配料丰富，带给您地道的亚洲面食体验。',
+    cuisine: '拉面馆',
+    transport: {
+      subway: 'U6到Münchner Freiheit站',
+    }
+  },
+  '51': {
+    phone: '无',
+    price: 10,
+    rating: 4.8,
+    hours: '周一至周六 11:00-19:00，周日休息',
+    tags: ['奶茶', '甜点', '休闲饮品'],
+    description: '茶艺 Chayee Munich是一家致力于推广中国茶文化的奶茶店，提供各种创意茶饮和传统茶饮，让您体验中国茶文化的魅力。',
+    cuisine: '奶茶店',
+    transport: {
+      subway: 'U3,U6到Gieselastraße站',
+    }
+  },
+  '52': {
+    phone: '+49 1520 9183811',
+    price: 15,
+    rating: 4.4,
+    hours: '周一至周四 10:00-22:00,周五至周日 10:00-23:59',
+    tags: ['新疆菜', '烤肉', '手抓饭'],
+    description: '丝路风味 KEBUP 22提供正宗的新疆美食和中亚风味，从烤羊肉串到手抓饭，每一道菜品都能让您感受到丝绸之路的美食文化。',
+    cuisine: '新疆菜',
+    transport: {
+      subway: 'U3,U6到Gieselastraße站',
+    }
+  },
+  '53': {
+    phone: '+49 89 89839766',
+    price: 35,
+    rating: 4.2,
+    hours: '周一至周日 11:30-15:00, 17:30-22:30',
+    tags: ['云南菜', '特色菜', '民族风味'],
+    description: '悦满楼专注于提供正宗的云南风味美食，从过桥米线到汽锅鸡，带您领略云南多元化的美食文化和独特的味道。',
+    cuisine: '云南菜',
+    transport: {
+      subway: 'U6到Holyapfelkreuth站',
+    }
+  },
+  '54': {
+    phone: '+49 89 21949970',
+    price: 50,
+    rating: 4.5,
+    hours: '周二至周日 12:00-14:30, 18:00-23:00,周一休息',
+    tags: ['中餐馆', '高档餐厅', '商务宴请'],
+    description: '老金中餐馆是慕尼黑一家高档中餐厅，提供精致的中式料理和优质的服务，环境雅致，是商务宴请和特殊场合的理想选择。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'Sbahn到Isator站',
+    }
+  },
+  '55': {
+    phone: '+49 89 24211197',
+    price: 25,
+    rating: 4.2,
+    hours: '周一至周六 11:30-15:00, 17:30-22:30,周日休息',
+    tags: ['中餐馆', '家常菜', '聚餐'],
+    description: '小梅中餐馆 Mai Garten提供多种风味的中式美食，从北方面食到南方炒菜，菜品种类丰富，口味正宗，环境舒适，是家庭聚餐的理想场所。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U6到Holyapfelkreuth站',
+      bus: '17路到Reichenbachplatz站',
+    }
+  },
+  '56': {
+    phone: '+49 89 37779637',
+    price: 25,
+    rating: 4.4,
+    hours: '周一至周四 11:30-14:30, 17:30-22:30,周五至周日 11:30-23:00',
+    tags: ['中餐馆', '精致料理', '创意菜'],
+    description: '匠心餐厅以其精湛的烹饪技艺和创新的菜品设计而闻名，将传统中餐与现代元素相结合，带来全新的味觉体验。',
+    cuisine: '中餐馆',
+    transport: {
+      subway: 'U1到Maillingerstraße站',
+    }
+  },
+  '57': {
+    phone: '+49 8937002758',
+    price: 45,
+    rating: 4.7,
+    hours: '周一至周五 11:00-15:00, 17:00-23:00,周六至周日 11:00-23:00',
+    tags: ['火锅', '川菜', '麻辣'],
+    description: '川流 Spicy Temptation以其正宗的四川火锅而闻名，汤底麻辣鲜香，食材新鲜丰富，让您体验地道的川式火锅文化。',
+    cuisine: '火锅',
+    transport: {
+      subway: 'U6到Dietlindenstraße站',
+    }
+  },
+  '58': {
+    phone: '无',
+    price: 15,
+    rating: 4.7,
+    hours: '周二至周日 11:30-22:00,周一休息',
+    tags: ['面馆', '拉面', '经济实惠'],
+    description: '面客专注于提供各种风味的亚洲面条，从兰州拉面到担担面，每一碗面都充满了独特的风味，是面食爱好者的天堂。',
+    cuisine: '面馆',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '59': {
+    phone: '无',
+    price: 15,
+    rating: 4.5,
+    hours: '周一周三周四 11:00-15:00, 17:00-22:00,周五至周日 11:00-22:00,周二休息',
+    tags: ['饺子', '面食', '简餐'],
+    description: '饺子吧提供各式手工水饺，馅料丰富多样，皮薄馅大，口感鲜美。除饺子外，还有各式面食和小吃。',
+    cuisine: '面馆简餐',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+  '60': {
+    phone: '无',
+    price: 15,
+    rating: 4.8,
+    hours: '周一至周六 11:00-20:00,周日休息',
+    tags: ['简餐', '熟食', '便捷'],
+    description: '小米粒是一家专注于提供正宗中式快餐的小店，主打各式盖浇饭、炒面和熟食。口味地道，价格实惠，适合学生和上班族快速就餐。店内环境整洁，服务热情，是慕尼黑地区中餐快餐的优质选择。',
+    cuisine: '简餐熟食',
+    transport: {
+      subway: 'U2线到Theresienstraße站',
+    }
+  },
+};
+
+// 导出restaurantDetails供其他文件使用
+module.exports.restaurantDetails = restaurantDetails;
+
 Page({
 
   /**
@@ -101,8 +826,20 @@ Page({
       success: function() {
         wx.showToast({
           title: '地址已复制',
-          icon: 'success',
-          duration: 1500
+          icon: 'success'
+        });
+      }
+    });
+  },
+
+  copyPhone: function(e) {
+    const phone = e.currentTarget.dataset.phone;
+    wx.setClipboardData({
+      data: phone,
+      success: function() {
+        wx.showToast({
+          title: '电话已复制',
+          icon: 'success'
         });
       }
     });
@@ -161,577 +898,6 @@ Page({
       });
     }, 5000); // 5秒超时
 
-    // 获取餐厅详情数据
-    const restaurantDetails = {
-      '1': {
-        phone: '无',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-21:30',
-        tags: ['麻辣烫', '中式料理', '经济实惠'],
-        description: 'Gululu Mini Hot Pot 提供正宗的麻辣烫，食材新鲜，口味地道。适合朋友聚餐和快速就餐。',
-        cuisine: '麻辣烫',
-        transport: {
-          subway: 'U3线到Olympiazentrum站',
-          bus: '144/180路到奥林匹克公园站'
-        }
-      },
-      '2': {
-        phone: '+49 89 37454752',
-        price: 15,
-        rating: 4.5,
-        hours: '周六至周日 9:30-20:00',
-        tags: ['麻辣烫', '中式料理', '连锁店'],
-        description: '张亮麻辣烫是中国知名连锁麻辣烫品牌，提供各种蔬菜、肉类、豆制品等食材，顾客可自由选择，汤底麻辣鲜香。',
-        cuisine: '麻辣烫'
-      },
-      '3': {
-        phone: '+49 89 12262573',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-21:00',
-        tags: ['川菜', '麻辣', '中餐'],
-        description: '你好成都餐厅提供正宗四川风味，麻辣鲜香，菜品丰富多样，包括经典川菜及特色小吃。',
-        cuisine: '川菜'
-      },
-      '4': {
-        phone: '+49 160 95881606',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['中餐', '家庭聚餐', '经济实惠'],
-        description: '唐人街餐厅提供多种中式美食，包括粤菜、川菜等多个地方风味，适合家庭聚餐和朋友聚会。',
-        cuisine: '中餐馆'
-      },
-      '5': {
-        phone: '+49 89 28855860',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-21:30',
-        tags: ['烧烤', '韩式', '聚餐'],
-        description: 'Chagiya提供正宗的亚洲风味烧烤，以韩式烧烤为主，顾客可以在餐桌上自己烹饪新鲜食材，体验独特的用餐乐趣。',
-        cuisine: '烧烤店'
-      },
-      '6': {
-        phone: '+49 89 12345678',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['中餐馆', '家常菜', '聚餐'],
-        description: '宴遇中餐馆提供地道的中国家常菜，口味正宗，环境舒适，是朋友聚餐的理想场所。',
-        cuisine: '中餐馆'
-      },
-      '7': {
-        phone: '+49 89 23456789',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 12:00-23:00',
-        tags: ['火锅', '川菜', '聚餐'],
-        description: '古蜀火锅提供正宗的四川火锅体验，汤底麻辣鲜香，食材新鲜丰富，适合亲友聚餐。',
-        cuisine: '火锅'
-      },
-      '8': {
-        phone: '+49 89 34567890',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 17:00-23:00',
-        tags: ['火锅', '夜宵', '聚餐'],
-        description: '零点火锅以其深夜营业时间和丰富的食材选择闻名，提供多种口味的汤底，满足不同食客的需求。',
-        cuisine: '火锅'
-      },
-      '9': {
-        phone: '+49 89 45678901',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 12:00-22:00',
-        tags: ['面馆', '中式简餐', '经济实惠'],
-        description: 'Mian Noodles专注于提供各种风味的中式面条，从兰州拉面到担担面，每一碗都充满了家乡的味道。',
-        cuisine: '面馆'
-      },
-      '10': {
-        phone: '+49 89 56789012',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 12:00-22:00',
-        tags: ['干锅', '麻辣烫', '川菜'],
-        description: '麻辣煮義融合了四川麻辣烫和干锅的精髓，提供独特的川式烹饪体验，麻辣鲜香，回味无穷。',
-        cuisine: '干锅麻辣烫'
-      },
-      '11': {
-        phone: '+49 89 67890123',
-        price: 45,
-        rating: 4.5,
-        hours: '周一至周日 17:00-23:00',
-        tags: ['火锅', '高档餐厅', '商务宴请'],
-        description: 'Chois中国的味道火锅店将传统火锅与现代餐饮完美结合，提供高品质的食材和精致的用餐环境。',
-        cuisine: '火锅'
-      },
-      '12': {
-        phone: '+49 89 78901234',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 12:00-22:00',
-        tags: ['新疆菜', '民族特色', '烤肉'],
-        description: '天山维吾尔餐馆提供正宗的新疆美食，包括手抓饭、烤羊肉串和各种特色面食，让您感受丝绸之路的美食文化。',
-        cuisine: '新疆菜'
-      },
-      '13': {
-        phone: '+49 89 89012345',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['拉面', '牛肉面', '中式简餐'],
-        description: '马克思牛肉拉面以其独特的牛肉汤底和手工拉制的面条闻名，每一碗都散发着浓郁的牛肉香气。',
-        cuisine: '拉面'
-      },
-      '14': {
-        phone: '+49 89 90123456',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['湘菜', '辣味', '特色菜'],
-        description: '湘聚餐厅提供地道的湖南美食，以麻辣鲜香的口味著称，特色菜品包括剁椒鱼头、湘味小炒肉等。',
-        cuisine: '湘菜'
-      },
-      '15': {
-        phone: '+49 89 01234567',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:00',
-        tags: ['台湾菜', '家常菜', '简餐'],
-        description: 'Song\'s Kitchen提供道地的台湾家常菜，从卤肉饭到珍珠奶茶，带给您浓浓的台湾风味。',
-        cuisine: '台湾菜'
-      },
-      '16': {
-        phone: '+49 89 12345670',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['面馆', '简餐', '经济实惠'],
-        description: '面三郎专注于提供各种风味的亚洲面条，从日式拉面到中式炸酱面，种类丰富，口味正宗。',
-        cuisine: '面馆简餐'
-      },
-      '17': {
-        phone: '+49 89 23456701',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['面馆', '简餐', '经济实惠'],
-        description: '一大碗以其分量十足的面食赢得了众多食客的喜爱，提供多种中式面条和配料选择，满足不同口味的需求。',
-        cuisine: '面馆简餐'
-      },
-      '18': {
-        phone: '+49 89 34567012',
-        price: 35,
-        rating: 4.5,
-        hours: '周一至周日 17:00-23:00',
-        tags: ['海鲜', '中式料理', '高档餐厅'],
-        description: 'Hai Seafood Izakaya提供新鲜的海鲜料理，融合中式和日式烹饪技法，为食客带来独特的美食体验。',
-        cuisine: '中式海鲜'
-      },
-      '19': {
-        phone: '+49 89 45670123',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 10:00-22:00',
-        tags: ['新疆菜', '面馆', '特色料理'],
-        description: 'TAKLAMAKAN餐厅提供正宗的新疆维吾尔美食，招牌菜品包括大盘鸡、手抓饭和拉条子等传统特色菜。',
-        cuisine: '新疆菜面馆'
-      },
-      '20': {
-        phone: '+49 89 56701234',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['冒菜', '川菜', '麻辣'],
-        description: '千椒百冒以其独特的冒菜制作工艺闻名，麻辣鲜香的汤底和丰富的配料选择，带来地道的四川味道。',
-        cuisine: '冒菜川菜'
-      },
-      '46': {
-        phone: '+49 89 65789012',
-        price: 35,
-        rating: 4.5,
-        hours: '周一至周日 11:00-23:00',
-        tags: ['中餐馆', '高档餐厅', '商务宴请'],
-        description: '悠游之餐厅融合了中式烹饪和西式用餐体验，提供精致的中式料理和舒适的就餐环境，是商务聚餐和特殊场合的理想选择。',
-        cuisine: '中餐馆'
-      },
-      '21': {
-        phone: '+49 89 21345600',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:00',
-        tags: ['台湾菜', '下午茶', '甜点'],
-        description: 'ChiaChia\'s Cafe提供正宗的台湾小吃和甜点，从珍珠奶茶到台式蛋糕，带给您家乡的味道。精致的环境和优质的服务让人流连忘返。',
-        cuisine: '台湾菜下午茶',
-        transport: {
-          subway: 'U4线到Lehel站',
-          bus: '132路到Thierschstraße站'
-        }
-      },
-      '22': {
-        phone: '+49 89 23467812',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['面馆', '简餐', '经济实惠'],
-        description: 'Chen\'s Nudelbar是慕尼黑市中心的一家知名亚洲面馆，提供多种风味的亚洲面条，从兰州拉面到日式拉面，种类丰富，价格实惠。',
-        cuisine: '面馆简餐'
-      },
-      '23': {
-        phone: '+49 89 34587109',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:30',
-        tags: ['面馆', '经济实惠', '中式简餐'],
-        description: 'Qin Cheng餐厅以其正宗的中式面条和实惠的价格而闻名，每一碗面都散发着浓郁的家乡风味，让您回味无穷。',
-        cuisine: '面馆'
-      },
-      '24': {
-        phone: '+49 89 45678023',
-        price: 15,
-        rating: 4.5,
-        hours: '周六 10:30-20:00',
-        tags: ['饺子', '点心', '经济实惠'],
-        description: 'LeDu Happy Dumplings专注于提供各种风味的手工饺子，从传统猪肉白菜馅到创新口味，每一个饺子都包含着匠心，让您体验地道的中国味道。',
-        cuisine: '饺子馆'
-      },
-      '25': {
-        phone: '+49 89 56780910',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:30',
-        tags: ['川菜', '面馆', '辣味'],
-        description: '川味王小面馆提供正宗的四川风味面食，从担担面到麻辣牛肉面，麻辣鲜香，让您体验地道的川式面食文化。',
-        cuisine: '川菜面馆'
-      },
-      '26': {
-        phone: '+49 89 67890234',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:30',
-        tags: ['湘菜', '辣味', '家常菜'],
-        description: '湘香轩提供正宗的湖南美食，以香辣可口的风味著称，招牌菜包括剁椒鱼头、湖南小炒肉等多种正宗湘菜。',
-        cuisine: '湘菜'
-      },
-      '27': {
-        phone: '+49 89 78901345',
-        price: 10,
-        rating: 4.5,
-        hours: '周六 12:00-18:00',
-        tags: ['蛋糕', '甜点', '下午茶'],
-        description: 'Lui\'s Cake是慕尼黑一家备受欢迎的亚洲风味蛋糕店，提供多种手工制作的甜点和蛋糕，精致美味，是下午茶的理想选择。',
-        cuisine: '蛋糕店'
-      },
-      '28': {
-        phone: '+49 89 89012456',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-23:00',
-        tags: ['面馆', '经济实惠', '中式简餐'],
-        description: '面次郎以其独特的拉面工艺和丰富的配料选择而闻名，每一碗面都经过精心烹制，汤底浓郁，面条筋道，让您体验地道的亚洲面食文化。',
-        cuisine: '面馆'
-      },
-      '29': {
-        phone: '+49 89 90123467',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-04:30',
-        tags: ['新疆菜', '烤肉', '民族特色'],
-        description: 'Kashgar Uyghur Restaurant提供正宗的新疆维吾尔美食，从手抓饭到烤羊肉串，每一道菜都充满了浓郁的西域风情，让您感受丝绸之路的美食文化。',
-        cuisine: '新疆菜'
-      },
-      '30': {
-        phone: '+49 89 01234678',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-20:00',
-        tags: ['简餐', '经济实惠', '家常菜'],
-        description: 'Wais Küche提供多种亚洲风味的简餐，从炒饭到盖浇饭，菜品丰富，价格实惠，是午餐和晚餐的理想选择。',
-        cuisine: '简餐'
-      },
-      '31': {
-        phone: '+49 89 12345689',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:30',
-        tags: ['饺子', '点心', '经济实惠'],
-        description: 'LeDu - Happy Dumplings专注于提供各种风味的手工饺子，从传统猪肉白菜馅到创新口味，每一个饺子都包含着匠心，让您体验地道的中国味道。',
-        cuisine: '饺子馆'
-      },
-      '32': {
-        phone: '+49 89 23456790',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['韩国料理', '烧烤', '经济实惠'],
-        description: '老金韩国料理提供正宗的韩式美食，从韩式烤肉到韩式拌饭，每一道菜品都充满了韩国风味，让您尽情享受韩国美食文化。',
-        cuisine: '韩餐'
-      },
-      '33': {
-        phone: '+49 89 34567801',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 12:00-22:00',
-        tags: ['砂锅', '简餐', '经济实惠'],
-        description: '小魚砂鍋以其特色的砂锅菜品而闻名，食材新鲜，汤底鲜美，是寒冷冬日里的一道暖心美食。',
-        cuisine: '砂锅简餐'
-      },
-      '34': {
-        phone: '+49 89 45678912',
-        price: 15,
-        rating: 4.5,
-        hours: '周六 12:00-18:00',
-        tags: ['抹茶', '蛋糕', '甜点'],
-        description: '柒叶 Kencho Matcha是一家专注于抹茶甜品的精品店，提供多种抹茶风味的蛋糕、甜点和饮品，让您体验纯正的抹茶文化。',
-        cuisine: '抹茶蛋糕'
-      },
-      '35': {
-        phone: '+49 89 56789023',
-        price: 10,
-        rating: 4.5,
-        hours: '周六 11:00-20:30',
-        tags: ['饭团', '简餐', '经济实惠'],
-        description: 'BANG以其创意十足的日式饭团而受到欢迎，使用优质米饭和丰富馅料，每一个饭团都是一个小巧的美食杰作。',
-        cuisine: '饭团'
-      },
-      '36': {
-        phone: '+49 89 67890134',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:30',
-        tags: ['包子', '点心', '简餐'],
-        description: 'Baoz! Bar以其手工制作的各式包子而闻名，从传统猪肉包到创新口味，每一个包子都是一份用心的作品，是忙碌生活中的美味选择。',
-        cuisine: '包子简餐'
-      },
-      '37': {
-        phone: '+49 89 78901245',
-        price: 15,
-        rating: 4.5,
-        hours: '周六 11:30-21:00',
-        tags: ['面馆', '简餐', '经济实惠'],
-        description: 'Mamma Bao - Adalbertstraße提供多种亚洲风味面食和包子，从拉面到刀削面，每一道菜品都充满了家的味道。',
-        cuisine: '面馆简餐'
-      },
-      '38': {
-        phone: '+49 89 89012356',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-21:30',
-        tags: ['麻辣烫', '串串香', '经济实惠'],
-        description: '杨国福麻辣烫是来自中国的知名连锁麻辣烫品牌，提供多种新鲜食材和特色汤底，让您自由搭配，体验麻辣鲜香的美食享受。',
-        cuisine: '麻辣烫'
-      },
-      '39': {
-        phone: '+49 89 90123467',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-23:00',
-        tags: ['川菜', '特色菜', '中餐'],
-        description: 'SEEN RESTAURANT提供创新的现代川菜，将传统川菜与现代烹饪技巧相结合，带来全新的味觉体验，是品尝正宗川菜的理想场所。',
-        cuisine: '川菜'
-      },
-      '40': {
-        phone: '+49 89 01234578',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-23:00',
-        tags: ['中餐馆', '粤菜', '家庭聚餐'],
-        description: '福源酒家提供正宗的粤式美食，从烧腊到点心，菜品丰富多样，口味正宗，环境舒适，是家庭聚餐和朋友聚会的理想场所。',
-        cuisine: '中餐馆'
-      },
-      '41': {
-        phone: '+49 89 12345689',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['包子', '面食', '简餐'],
-        description: 'Mamma Bao以其地道的包子和面食而闻名，每一个包子都散发着浓郁的香气，是早餐和午餐的理想选择。',
-        cuisine: '包子面馆'
-      },
-      '42': {
-        phone: '+49 89 23456790',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:30',
-        tags: ['中餐馆', '家常菜', '聚餐'],
-        description: '鼎尚中餐以其丰富的菜品选择和优质的服务而受到欢迎，从北方面食到南方炒菜，菜系丰富，满足不同口味的需求。',
-        cuisine: '中餐馆'
-      },
-      '43': {
-        phone: '+49 89 34567801',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['面馆', '拉面', '经济实惠'],
-        description: '面太郎专注于提供地道的亚洲面食，从日式拉面到中式刀削面，种类丰富，口味正宗，是面食爱好者的天堂。',
-        cuisine: '面馆'
-      },
-      '44': {
-        phone: '+49 89 45678912',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-23:00',
-        tags: ['中餐馆', '创意菜', '精致料理'],
-        description: 'FAN范餐厅以其创新的中式料理和现代化的用餐环境而闻名，将传统中餐与现代烹饪技法相结合，带来全新的味觉体验。',
-        cuisine: '中餐馆'
-      },
-      '45': {
-        phone: '+49 89 56789023',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-23:00',
-        tags: ['台湾菜', '家常菜', '特色小吃'],
-        description: '送小厨提供正宗的台湾家常菜和特色小吃，从卤肉饭到三杯鸡，每一道菜品都充满了台湾风味，让您仿佛置身宝岛台湾。',
-        cuisine: '台湾菜'
-      },
-      '47': {
-        phone: '+49 89 67890134',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['川菜', '特色菜', '辣味'],
-        description: '你好和合餐厅提供正宗的四川风味菜肴，以其麻辣鲜香的特色和丰富的菜品选择而受到欢迎，是品尝地道川菜的理想场所。',
-        cuisine: '川菜'
-      },
-      '48': {
-        phone: '+49 89 78901245',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:30',
-        tags: ['粤菜', '海鲜', '点心'],
-        description: '老香港餐馆提供正宗的粤式美食，从烧腊到点心，从海鲜到家常菜，菜品种类丰富，口味地道，让您感受香港美食文化的魅力。',
-        cuisine: '粤菜'
-      },
-      '49': {
-        phone: '+49 89 89012356',
-        price: 10,
-        rating: 4.5,
-        hours: '周一至周日 12:00-22:00',
-        tags: ['奶茶', '蛋糕', '甜点'],
-        description: '乐茶是一家专注于提供优质奶茶和甜点的店铺，从珍珠奶茶到各种口味的蛋糕，满足您对甜品的所有想象。',
-        cuisine: '奶茶蛋糕'
-      },
-      '50': {
-        phone: '+49 89 90123467',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['拉面', '面馆', '经济实惠'],
-        description: '面四郎专注于提供正宗的日式拉面和各种亚洲面食，汤底浓郁，面条筋道，配料丰富，带给您地道的亚洲面食体验。',
-        cuisine: '拉面馆'
-      },
-      '51': {
-        phone: '+49 89 01234578',
-        price: 10,
-        rating: 4.5,
-        hours: '周一至周日 11:00-22:00',
-        tags: ['奶茶', '甜点', '休闲饮品'],
-        description: '茶艺 Chayee Munich是一家致力于推广中国茶文化的奶茶店，提供各种创意茶饮和传统茶饮，让您体验中国茶文化的魅力。',
-        cuisine: '奶茶店'
-      },
-      '52': {
-        phone: '+49 15209183811',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 00:00-23:59',
-        tags: ['新疆菜', '烤肉', '手抓饭'],
-        description: '丝路风味 KEBUP 22提供正宗的新疆美食和中亚风味，从烤羊肉串到手抓饭，每一道菜品都能让您感受到丝绸之路的美食文化。',
-        cuisine: '新疆菜'
-      },
-      '53': {
-        phone: '+49 89 89839766',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['云南菜', '特色菜', '民族风味'],
-        description: '悦满楼专注于提供正宗的云南风味美食，从过桥米线到汽锅鸡，带您领略云南多元化的美食文化和独特的味道。',
-        cuisine: '云南菜'
-      },
-      '54': {
-        phone: '+49 8921949970',
-        price: 50,
-        rating: 4.5,
-        hours: '周二至周日 18:00-23:00',
-        tags: ['中餐馆', '高档餐厅', '商务宴请'],
-        description: '老金中餐馆是慕尼黑一家高档中餐厅，提供精致的中式料理和优质的服务，环境雅致，是商务宴请和特殊场合的理想选择。',
-        cuisine: '中餐馆'
-      },
-      '55': {
-        phone: '+49 8924211197',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周六 11:00-22:30',
-        tags: ['中餐馆', '家常菜', '聚餐'],
-        description: '小梅中餐馆 Mai Garten提供多种风味的中式美食，从北方面食到南方炒菜，菜品种类丰富，口味正宗，环境舒适，是家庭聚餐的理想场所。',
-        cuisine: '中餐馆'
-      },
-      '56': {
-        phone: '+49 8937779637',
-        price: 25,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['中餐馆', '精致料理', '创意菜'],
-        description: '匠心餐厅以其精湛的烹饪技艺和创新的菜品设计而闻名，将传统中餐与现代元素相结合，带来全新的味觉体验。',
-        cuisine: '中餐馆'
-      },
-      '57': {
-        phone: '+49 8937002758',
-        price: 30,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['火锅', '川菜', '麻辣'],
-        description: '川流 Spicy Temptation以其正宗的四川火锅而闻名，汤底麻辣鲜香，食材新鲜丰富，让您体验地道的川式火锅文化。',
-        cuisine: '火锅'
-      },
-      '58': {
-        phone: '无',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['面馆', '拉面', '经济实惠'],
-        description: '面客专注于提供各种风味的亚洲面条，从兰州拉面到担担面，每一碗面都充满了独特的风味，是面食爱好者的天堂。',
-        cuisine: '面馆'
-      },
-      '59': {
-        phone: '无',
-        price: 15,
-        rating: 4.5,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['饺子', '面食', '简餐'],
-        description: '饺子吧提供各式手工水饺，馅料丰富多样，皮薄馅大，口感鲜美。除饺子外，还有各式面食和小吃。',
-        cuisine: '面馆简餐'
-      },
-      '60': {
-        phone: '无',
-        price: 15,
-        rating: 4.6,
-        hours: '周一至周日 11:30-22:30',
-        tags: ['简餐', '熟食', '便捷'],
-        description: '小米粒是一家专注于提供正宗中式快餐的小店，主打各式盖浇饭、炒面和熟食。口味地道，价格实惠，适合学生和上班族快速就餐。店内环境整洁，服务热情，是慕尼黑地区中餐快餐的优质选择。',
-        cuisine: '简餐熟食',
-        transport: {
-          subway: 'U2线到Theresienstraße站',
-          bus: '100路到Luisenstraße站'
-        }
-      },
-    };
-
-    // 对所有餐厅应用默认详情
-    const defaultDetails = {
-      phone: '无',
-      price: 15,
-      rating: 4.5,
-      hours: '周一至周日 11:00-22:00',
-      tags: ['中餐', '经济实惠'],
-      description: '提供正宗的中式美食，口味地道，价格实惠，环境舒适。',
-      cuisine: '中餐馆',
-      transport: {
-        subway: 'U1/U2/U3线到Marienplatz站',
-        bus: '100/150路到中心广场站'
-      }
-    };
-
     // 尝试从本地存储或全局数据获取餐厅基本信息
     let restaurantData = null;
     try {
@@ -754,7 +920,7 @@ Page({
             // 清除超时计时器
             clearTimeout(timeoutId);
             console.log('接收到餐厅数据:', data);
-            this.processAndDisplayRestaurantData(data, shopId, restaurantDetails, defaultDetails);
+            this.processAndDisplayRestaurantData(data, shopId);
           });
           return; // 等待事件回调
         } else {
@@ -766,27 +932,26 @@ Page({
     }
 
     // 如果有缓存数据或eventChannel失败，直接处理数据
-    this.processAndDisplayRestaurantData(restaurantData || {}, shopId, restaurantDetails, defaultDetails);
+    this.processAndDisplayRestaurantData(restaurantData || {}, shopId);
     clearTimeout(timeoutId);
   },
 
   // 处理并显示餐厅数据
-  processAndDisplayRestaurantData: function(data, shopId, restaurantDetails, defaultDetails) {
+  processAndDisplayRestaurantData: function(data, shopId) {
     // 获取已有详情或使用默认详情
-    const details = restaurantDetails[shopId] || defaultDetails;
-    
-    // 为缺少交通信息的餐厅生成随机交通指南
-    if (!details.transport) {
-      const subway = ['U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8'];
-      const subwayStations = ['Marienplatz', 'Hauptbahnhof', 'Sendlinger Tor', 'Münchner Freiheit', 'Odeonsplatz'];
-      const bus = ['100', '150', '52', '68', '132', '190', '57', '44'];
-      const busStations = ['中心广场站', '主火车站', '市政厅站', '大学区站', '购物中心站'];
-      
-      details.transport = {
-        subway: `${subway[Math.floor(Math.random() * subway.length)]}线到${subwayStations[Math.floor(Math.random() * subwayStations.length)]}站`,
-        bus: `${bus[Math.floor(Math.random() * bus.length)]}/${parseInt(bus[Math.floor(Math.random() * bus.length)]) + 10}路到${busStations[Math.floor(Math.random() * busStations.length)]}`
-      };
-    }
+    const details = restaurantDetails[shopId] || {
+      phone: '无',
+      price: 15,
+      rating: 4.5,
+      hours: '周一至周日 11:00-22:00',
+      tags: ['中餐', '经济实惠'],
+      description: '提供正宗的中式美食，口味地道，价格实惠，环境舒适。',
+      cuisine: '中餐馆',
+      transport: {
+        subway: 'U1/U2/U3线到Marienplatz站',
+        bus: '100/150路到中心广场站'
+      }
+    };
     
     // 组合完整的餐厅数据
     const shopData = {
@@ -801,11 +966,11 @@ Page({
       rating: details.rating || 4.5,
       hours: details.hours || '周一至周日 11:00-22:00',
       tags: details.tags || ['中餐', '经济实惠'],
-      description: details.description || '提供正宗的中式美食，口味地道，价格实惠，环境舒适。',
+      description: details.description,
       cuisine: details.cuisine || '中餐馆',
-      transport: details.transport || {
-        subway: 'U1线到Marienplatz站',
-        bus: '100/150路到中心广场站'
+      transport: {
+        subway: details.transport?.subway || '暂无地铁信息',
+        bus: details.transport?.bus || '暂无公交信息'
       }
     };
     
@@ -894,7 +1059,8 @@ Page({
       'chois': "https://i.ibb.co/4vSd4h1/chois.png", // Chois中国的味道火锅店
       'chiachia': "https://i.ibb.co/bjVBWjfL/chiachia.png", // ChiaChia's Cafe
       'chagiya': "https://i.ibb.co/8DK09G6D/chagiya.png",   // Chagiya
-      'chen': "https://i.ibb.co/7tmycGZx/chen.png"    // Chen's Nudelbar
+      'chen': "https://i.ibb.co/7tmycGZx/chen.png",  // Chen's Nudelbar
+      'jbl': "https://i.ibb.co/9HvskM8W/jbl.png"     // 聚宝楼
     };
     
     // 创建ID到图片URL的映射
@@ -917,6 +1083,7 @@ Page({
       16: imageUrls.m3l,      // 面三郎
       17: imageUrls.ydw,      // 一大碗
       18: imageUrls.hai,      // Hai Seafood Izakaya
+      19: imageUrls.jbl,      // 聚宝楼
       60: imageUrls.xml       // 小米粒
     };
     
