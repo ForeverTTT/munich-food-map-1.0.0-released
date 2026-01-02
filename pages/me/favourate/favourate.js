@@ -66,7 +66,19 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {
+    return {
+      title: '我收藏的慕尼黑美食 - 慕尼黑美食地图',
+      path: '/pages/me/favourate/favourate',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
+  },
 
+  onShareTimeline() {
+    return {
+      title: '我的慕尼黑美食收藏夹',
+      query: '',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
   },
 
   updateFavoriteImagePaths: function() {

@@ -67,7 +67,19 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {
+    return {
+      title: '我的慕尼黑美食浏览记录',
+      path: '/pages/me/history/history',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
+  },
 
+  onShareTimeline() {
+    return {
+      title: '我的慕尼黑美食浏览记录',
+      query: '',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
   },
 
   updateHistoryImagePaths: function() {

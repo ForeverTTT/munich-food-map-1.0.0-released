@@ -76,11 +76,19 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
-    // 用户点击右上角分享时执行
+  onShareAppMessage() {
     return {
-      title: '关于我们',
-      path: '/pages/me/about/about'
+      title: '慕尼黑美食地图 - 发现附近的中餐美食',
+      path: '/pages/me/about/about',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
+  },
+
+  onShareTimeline() {
+    return {
+      title: '慕尼黑美食地图 - 发现附近的中餐美食',
+      query: '',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
     }
   }
 })

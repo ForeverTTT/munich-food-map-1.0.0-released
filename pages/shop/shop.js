@@ -815,7 +815,21 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {
+    const { shopData } = this.data;
+    return {
+      title: shopData.name + ' - 慕尼黑美食地图',
+      path: '/pages/shop/shop?id=' + shopData.id,
+      imageUrl: shopData.cloudImageId || shopData.image
+    }
+  },
 
+  onShareTimeline() {
+    const { shopData } = this.data;
+    return {
+      title: shopData.name + ' - ' + shopData.cuisine,
+      query: 'id=' + shopData.id,
+      imageUrl: shopData.cloudImageId || shopData.image
+    }
   },
 
   // 复制餐厅地址

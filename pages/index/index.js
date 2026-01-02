@@ -1424,4 +1424,21 @@ Page({
       });
     }
   },
+  // 分享给朋友
+  onShareAppMessage() {
+    return {
+      title: '慕尼黑美食地图',
+      path: '/pages/index/index',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '慕尼黑美食地图 - 寻找附近的中餐美食',
+      query: '',
+      imageUrl: 'cloud://cloud1-8gaz8w8x9edb3a42.636c-cloud1-8gaz8w8x9edb3a42-1348967216/images/share-cover.png'
+    }
+  }
 })
